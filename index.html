@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polish! - 個別登録 & リアルタイム共創ジュエリー</title>
+    <title>Polish! - メール認証 & リアルタイム共創ジュエリー</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS SDK CDN -->
@@ -46,9 +46,9 @@
         <header class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-4 shadow-md flex justify-between items-center z-10">
             <div>
                 <h1 class="font-bold text-lg tracking-wider">✨ Polish!</h1>
-                <p class="text-[10px] text-violet-200">職人: <span id="header-username" class="font-bold text-amber-300">未登録 (マイページへ)</span></p>
+                <p class="text-[10px] text-violet-200">ログイン中: <span id="header-useremail" class="font-bold text-amber-300">未ログイン</span></p>
             </div>
-            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">マルチ同期中</span>
+            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">認証保護中</span>
         </header>
 
         <!-- メインコンテンツ領域 -->
@@ -56,8 +56,8 @@
             <!-- 【画面1：ホーム】 -->
             <div id="view-home" class="p-4 space-y-4">
                 <div class="bg-violet-50 border border-violet-100 rounded-2xl p-4 text-violet-900 shadow-sm">
-                    <h2 class="font-bold text-sm">💎 仲間と一緒に創り上げる</h2>
-                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">まずは「マイページ」で自分の職人ネームを登録して、工房へ参加しよう！</p>
+                    <h2 class="font-bold text-sm">💎 メール認証で安心の共創クラフト</h2>
+                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">まずは「マイページ」からログインまたは新規会員登録を行ってください。</p>
                 </div>
 
                 <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">進行中の共創プロジェクト</h3>
@@ -65,13 +65,13 @@
                 <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
                     <div class="bg-stone-900 h-40 flex items-center justify-center text-4xl relative">
                         🪨
-                        <span class="absolute top-3 left-3 text-[10px] bg-amber-400 text-stone-900 font-bold px-2 py-0.5 rounded-full">共同制作ルーム</span>
+                        <span class="absolute top-3 left-3 text-[10px] bg-amber-400 text-stone-900 font-bold px-2 py-0.5 rounded-full">認証制ルーム</span>
                     </div>
                     <div class="p-4 space-y-3">
                         <div>
                             <span class="text-[10px] text-violet-600 font-bold bg-violet-50 px-2 py-0.5 rounded-md">Atelier Lumière 監修</span>
                             <h4 id="card-title-1" class="font-bold text-gray-800 text-sm mt-1">月夜の雫 琥珀原石</h4>
-                            <p class="text-[11px] text-gray-500">「みんなの削り・磨きでK18ゴールド仕様へ進化させよう！」</p>
+                            <p class="text-[11px] text-gray-500">「仲間と協力してK18ゴールド仕様へ進化させよう！」</p>
                         </div>
                         <div class="flex justify-between items-end pt-2 border-t border-gray-50">
                             <div>
@@ -109,7 +109,7 @@
                         <div id="progress-bar" class="bg-gradient-to-r from-amber-400 to-violet-400 h-full rounded-full transition-all duration-300" style="width: 5%;"></div>
                     </div>
 
-                    <p id="status-message" class="text-[11px] text-stone-300 mt-2">あなたの名前で作業を実行しよう！</p>
+                    <p id="status-message" class="text-[11px] text-stone-300 mt-2">ログイン中のアカウントで作業を実行しよう！</p>
                 </div>
 
                 <!-- アクションボタン -->
@@ -126,32 +126,42 @@
                 </div>
             </div>
 
-            <!-- 【画面3：マイページ（個別ユーザー登録）】 -->
+            <!-- 【画面3：マイページ（メール認証・ログインフォーム）】 -->
             <div id="view-mypage" class="p-4 space-y-4 hidden">
-                <div class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
+                <!-- 未ログイン時のフォーム -->
+                <div id="auth-container" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
+                    <h3 class="font-bold text-gray-800 text-sm">🔐 ログイン / 新規登録</h3>
+                    <p class="text-[11px] text-gray-500">メールアドレスとパスワードを入力してください。</p>
+                    
+                    <div class="space-y-2">
+                        <input type="email" id="auth-email" placeholder="メールアドレス" class="w-full bg-gray-50 border border-gray-200 text-xs px-3 py-2.5 rounded-xl text-gray-700 outline-none focus:border-violet-500">
+                        <input type="password" id="auth-password" placeholder="パスワード (6文字以上)" class="w-full bg-gray-50 border border-gray-200 text-xs px-3 py-2.5 rounded-xl text-gray-700 outline-none focus:border-violet-500">
+                        
+                        <div class="flex gap-2 pt-1">
+                            <button onclick="handleSignUp()" class="flex-1 bg-violet-600 text-white text-xs font-bold py-2.5 rounded-xl hover:bg-violet-700 transition">新規登録</button>
+                            <button onclick="handleSignIn()" class="flex-1 bg-indigo-600 text-white text-xs font-bold py-2.5 rounded-xl hover:bg-indigo-700 transition">ログイン</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ログイン中の表示 -->
+                <div id="user-info-container" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm hidden">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center text-xl text-violet-700 font-bold">
                             💎
                         </div>
                         <div>
-                            <h3 class="font-bold text-gray-800 text-sm" id="display-username">未登録</h3>
-                            <p class="text-xs text-violet-600 font-medium">登録職人ステータス</p>
+                            <h3 class="font-bold text-gray-800 text-xs text-gray-500">ログイン中のアカウント</h3>
+                            <p class="text-xs text-violet-700 font-bold truncate max-w-[220px]" id="display-useremail">-</p>
                         </div>
                     </div>
 
-                    <div class="pt-3 border-t border-gray-100 space-y-2">
-                        <label class="block text-xs font-bold text-gray-700">あなたの職人ネーム（登録・変更）</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="username-input" placeholder="例：ルビーの匠 〇〇" class="bg-gray-50 border border-gray-200 text-xs px-3 py-2 rounded-xl flex-1 text-gray-700 outline-none focus:border-violet-500">
-                            <button onclick="registerUser()" class="bg-violet-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-violet-700 transition">登録</button>
-                        </div>
-                        <p class="text-[10px] text-gray-400">※名前を登録すると、工房での作業履歴にあなたの名前が記録されます。</p>
-                    </div>
+                    <button onclick="handleSignOut()" class="w-full bg-gray-100 text-gray-700 text-xs font-bold py-2.5 rounded-xl hover:bg-gray-200 transition">ログアウトする</button>
                 </div>
 
                 <div class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
-                    <h3 class="font-bold text-gray-800 text-xs">データベース接続</h3>
-                    <p class="text-xs text-emerald-600 font-bold">🟢 Supabase 個別ユーザー & リアルタイム同期中</p>
+                    <h3 class="font-bold text-gray-800 text-xs">セキュリティ</h3>
+                    <p class="text-xs text-emerald-600 font-bold">🟢 Supabase Auth メール認証保護中</p>
                 </div>
             </div>
         </main>
@@ -181,62 +191,91 @@
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentProjectId = null;
-        let currentUserId = localStorage.getItem('polish_user_id') || null;
-        let currentUsername = localStorage.getItem('polish_username') || null;
+        let currentUser = null;
 
         let currentProgress = 5;
         let currentStage = 1;
         let currentMetal = '真鍮 (Brass) - ベーシック';
 
         async function initApp() {
-            if (currentUsername && currentUserId) {
-                document.getElementById('display-username').innerText = currentUsername;
-                document.getElementById('header-username').innerText = currentUsername;
-                document.getElementById('username-input').value = currentUsername;
-            } else {
-                // 未登録なら自動でマイページへ誘導
-                switchTab('mypage');
+            // 現在のログインセッションを確認
+            const { data: { session } } = await client.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                updateAuthUI();
             }
+
+            // 認証状態の変化を監視
+            client.auth.onAuthStateChange((event, session) => {
+                currentUser = session ? session.user : null;
+                updateAuthUI();
+            });
 
             // プロジェクトと最新ログの取得
             await fetchProjectAndLogs();
         }
 
-        async function registerUser() {
-            const inputName = document.getElementById('username-input').value.trim();
-            if (!inputName) {
-                alert("名前を入力してください。");
+        async function handleSignUp() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+
+            if (!email || !password) {
+                alert("メールアドレスとパスワードを入力してください。");
                 return;
             }
 
-            // Supabaseの profiles テーブルにユーザーを登録
-            const { data, error } = await client
-                .from('profiles')
-                .insert([{ username: inputName }])
-                .select()
-                .single();
-
+            const { data, error } = await client.auth.signUp({ email, password });
             if (error) {
-                alert("登録エラーが発生しました");
-                console.error(error);
+                alert("登録エラー: " + error.message);
+            } else {
+                alert("登録確認メールを送信した場合があります。またはそのままログイン可能です！✨");
+            }
+        }
+
+        async function handleSignIn() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+
+            if (!email || !password) {
+                alert("メールアドレスとパスワードを入力してください。");
                 return;
             }
 
-            currentUserId = data.id;
-            currentUsername = data.username;
+            const { data, error } = await client.auth.signInWithPassword({ email, password });
+            if (error) {
+                alert("ログインエラー: " + error.message);
+            } else {
+                alert("ログインしました！✨");
+                switchTab('home');
+            }
+        }
 
-            localStorage.setItem('polish_user_id', currentUserId);
-            localStorage.setItem('polish_username', currentUsername);
+        async function handleSignOut() {
+            await client.auth.signOut();
+            alert("ログアウトしました。");
+            switchTab('mypage');
+        }
 
-            document.getElementById('display-username').innerText = currentUsername;
-            document.getElementById('header-username').innerText = currentUsername;
+        function updateAuthUI() {
+            const authContainer = document.getElementById('auth-container');
+            const userInfoContainer = document.getElementById('user-info-container');
+            const headerEmail = document.getElementById('header-useremail');
+            const displayEmail = document.getElementById('display-useremail');
 
-            alert("職人登録が完了しました！✨ 工房へ進みましょう！");
-            switchTab('home');
+            if (currentUser) {
+                authContainer.classList.add('hidden');
+                userInfoContainer.classList.remove('hidden');
+                headerEmail.innerText = currentUser.email;
+                displayEmail.innerText = currentUser.email;
+            } else {
+                authContainer.classList.remove('hidden');
+                userInfoContainer.classList.add('hidden');
+                headerEmail.innerText = "未ログイン";
+                displayEmail.innerText = "-";
+            }
         }
 
         async function fetchProjectAndLogs() {
-            // プロジェクト取得
             const { data: projData } = await client.from('projects').select('*').limit(1).single();
             if (projData) {
                 currentProjectId = projData.id;
@@ -245,7 +284,6 @@
                 currentMetal = projData.metal_name;
                 updateUI(projData.title, projData.author);
 
-                // リアルタイム購読（プロジェクトの更新）
                 client
                   .channel('public:projects')
                   .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'projects' }, payload => {
@@ -260,10 +298,8 @@
                   .subscribe();
             }
 
-            // 初期ログ取得
             fetchLogs();
 
-            // リアルタイム購読（貢献ログの追加）
             client
               .channel('public:contributions')
               .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'contributions' }, payload => {
@@ -287,7 +323,6 @@
 
         function appendLog(username, actionText) {
             const container = document.getElementById('log-container');
-            // 「まだ履歴はありません」を消す
             if (container.innerText.includes('まだ履歴はありません')) {
                 container.innerHTML = '';
             }
@@ -297,8 +332,8 @@
         }
 
         function enterWorkshop() {
-            if (!currentUsername) {
-                alert("先にマイページで職人ネームを登録してください！");
+            if (!currentUser) {
+                alert("先にマイページでログインまたは新規登録を行ってください！");
                 switchTab('mypage');
                 return;
             }
@@ -306,8 +341,8 @@
         }
 
         async function performAction() {
-            if (!currentProjectId || !currentUserId) {
-                alert("先にマイページで職人登録をしてください！");
+            if (!currentProjectId || !currentUser) {
+                alert("先にマイページでログインしてください！");
                 switchTab('mypage');
                 return;
             }
@@ -322,7 +357,7 @@
             else if (currentProgress < 100) { currentStage = 4; currentMetal = '👑 最高級 K18ゴールド仕様 に進化！'; actionText = "鏡面仕上げを行いました（K18進化）！"; }
             else { currentStage = 5; currentMetal = '🌟 プレミアムK18ジュエリー確定'; actionText = "最後の仕上げを完了させました！"; }
 
-            // 1. プロジェクトの進捗を更新
+            // プロジェクト更新
             await client
                 .from('projects')
                 .update({ 
@@ -333,13 +368,14 @@
                 })
                 .eq('id', currentProjectId);
 
-            // 2. 貢献履歴（誰が何をしたか）を記録
+            // 貢献履歴にメールアドレスを記録
+            const shortName = currentUser.email.split('@')[0];
             await client
                 .from('contributions')
                 .insert([{
                     project_id: currentProjectId,
-                    user_id: currentUserId,
-                    username: currentUsername,
+                    user_id: currentUser.id,
+                    username: shortName,
                     action_type: actionText
                 }]);
         }
