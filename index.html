@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polish! - メール認証 & リアルタイム共創ジュエリー</title>
+    <title>Polish! - ログイン必須の共創ジュエリー</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS SDK CDN -->
@@ -46,9 +46,9 @@
         <header class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-4 shadow-md flex justify-between items-center z-10">
             <div>
                 <h1 class="font-bold text-lg tracking-wider">✨ Polish!</h1>
-                <p class="text-[10px] text-violet-200">ログイン中: <span id="header-useremail" class="font-bold text-amber-300">未ログイン</span></p>
+                <p class="text-[10px] text-violet-200">ステータス: <span id="header-status" class="font-bold text-amber-300">要ログイン</span></p>
             </div>
-            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">認証保護中</span>
+            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">セキュリティ保護</span>
         </header>
 
         <!-- メインコンテンツ領域 -->
@@ -56,8 +56,8 @@
             <!-- 【画面1：ホーム】 -->
             <div id="view-home" class="p-4 space-y-4">
                 <div class="bg-violet-50 border border-violet-100 rounded-2xl p-4 text-violet-900 shadow-sm">
-                    <h2 class="font-bold text-sm">💎 メール認証で安心の共創クラフト</h2>
-                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">まずは「マイページ」からログインまたは新規会員登録を行ってください。</p>
+                    <h2 class="font-bold text-sm">💎 共創クラフトプロジェクト</h2>
+                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">参加するにはログインが必要です。</p>
                 </div>
 
                 <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">進行中の共創プロジェクト</h3>
@@ -86,7 +86,7 @@
                 </div>
             </div>
 
-            <!-- 【画面2：工房（リアルタイム進行 & 貢献ログ）】 -->
+            <!-- 【画面2：工房（ログイン中のみアクセス可能）】 -->
             <div id="view-grow" class="p-4 space-y-4 hidden">
                 <div class="text-center space-y-1 py-1">
                     <span id="project-badge" class="text-[10px] bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full">⛏️ 段階1：荒削り（ハンマー作業）</span>
@@ -126,12 +126,12 @@
                 </div>
             </div>
 
-            <!-- 【画面3：マイページ（メール認証・ログインフォーム）】 -->
+            <!-- 【画面3：マイページ（ログイン・認証画面）】 -->
             <div id="view-mypage" class="p-4 space-y-4 hidden">
                 <!-- 未ログイン時のフォーム -->
                 <div id="auth-container" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
-                    <h3 class="font-bold text-gray-800 text-sm">🔐 ログイン / 新規登録</h3>
-                    <p class="text-[11px] text-gray-500">メールアドレスとパスワードを入力してください。</p>
+                    <h3 class="font-bold text-gray-800 text-sm">🔐 ログインが必要です</h3>
+                    <p class="text-[11px] text-gray-500">アプリを利用するにはメールアドレスでログインしてください。</p>
                     
                     <div class="space-y-2">
                         <input type="email" id="auth-email" placeholder="メールアドレス" class="w-full bg-gray-50 border border-gray-200 text-xs px-3 py-2.5 rounded-xl text-gray-700 outline-none focus:border-violet-500">
@@ -161,14 +161,14 @@
 
                 <div class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
                     <h3 class="font-bold text-gray-800 text-xs">セキュリティ</h3>
-                    <p class="text-xs text-emerald-600 font-bold">🟢 Supabase Auth メール認証保護中</p>
+                    <p class="text-xs text-emerald-600 font-bold">🟢 ログイン必須・認証保護中</p>
                 </div>
             </div>
         </main>
 
         <!-- ボトムナビゲーション -->
         <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3 z-20 shadow-lg">
-            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-violet-600 transition">
+            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-gray-400 transition">
                 <span class="text-lg">🏠</span>
                 <span class="text-[10px] font-bold mt-1">ホーム</span>
             </button>
@@ -176,7 +176,7 @@
                 <span class="text-lg">💎</span>
                 <span class="text-[10px] font-bold mt-1">工房・育成</span>
             </button>
-            <button onclick="switchTab('mypage')" id="nav-mypage" class="flex flex-col items-center text-gray-400 transition">
+            <button onclick="switchTab('mypage')" id="nav-mypage" class="flex flex-col items-center text-violet-600 transition">
                 <span class="text-lg">👤</span>
                 <span class="text-[10px] font-bold mt-1">マイページ</span>
             </button>
@@ -198,20 +198,27 @@
         let currentMetal = '真鍮 (Brass) - ベーシック';
 
         async function initApp() {
-            // 現在のログインセッションを確認
+            // セッション確認
             const { data: { session } } = await client.auth.getSession();
             if (session) {
                 currentUser = session.user;
                 updateAuthUI();
+                switchTab('home'); // ログインしていればホームへ
+            } else {
+                currentUser = null;
+                updateAuthUI();
+                switchTab('mypage'); // 未ログインなら強制的にマイページ（ログイン画面）へ！
             }
 
             // 認証状態の変化を監視
             client.auth.onAuthStateChange((event, session) => {
                 currentUser = session ? session.user : null;
                 updateAuthUI();
+                if (!currentUser) {
+                    switchTab('mypage'); // ログアウトしたら強制的にマイページへ
+                }
             });
 
-            // プロジェクトと最新ログの取得
             await fetchProjectAndLogs();
         }
 
@@ -228,7 +235,7 @@
             if (error) {
                 alert("登録エラー: " + error.message);
             } else {
-                alert("登録確認メールを送信した場合があります。またはそのままログイン可能です！✨");
+                alert("登録が完了しました！そのままログインできます。✨");
             }
         }
 
@@ -259,18 +266,20 @@
         function updateAuthUI() {
             const authContainer = document.getElementById('auth-container');
             const userInfoContainer = document.getElementById('user-info-container');
-            const headerEmail = document.getElementById('header-useremail');
+            const headerStatus = document.getElementById('header-status');
             const displayEmail = document.getElementById('display-useremail');
 
             if (currentUser) {
                 authContainer.classList.add('hidden');
                 userInfoContainer.classList.remove('hidden');
-                headerEmail.innerText = currentUser.email;
+                headerStatus.innerText = currentUser.email.split('@')[0];
+                headerStatus.className = "font-bold text-amber-300";
                 displayEmail.innerText = currentUser.email;
             } else {
                 authContainer.classList.remove('hidden');
                 userInfoContainer.classList.add('hidden');
-                headerEmail.innerText = "未ログイン";
+                headerStatus.innerText = "要ログイン";
+                headerStatus.className = "font-bold text-rose-300";
                 displayEmail.innerText = "-";
             }
         }
@@ -333,7 +342,7 @@
 
         function enterWorkshop() {
             if (!currentUser) {
-                alert("先にマイページでログインまたは新規登録を行ってください！");
+                alert("ログインが必要です！");
                 switchTab('mypage');
                 return;
             }
@@ -342,7 +351,7 @@
 
         async function performAction() {
             if (!currentProjectId || !currentUser) {
-                alert("先にマイページでログインしてください！");
+                alert("ログインしてください！");
                 switchTab('mypage');
                 return;
             }
@@ -357,7 +366,6 @@
             else if (currentProgress < 100) { currentStage = 4; currentMetal = '👑 最高級 K18ゴールド仕様 に進化！'; actionText = "鏡面仕上げを行いました（K18進化）！"; }
             else { currentStage = 5; currentMetal = '🌟 プレミアムK18ジュエリー確定'; actionText = "最後の仕上げを完了させました！"; }
 
-            // プロジェクト更新
             await client
                 .from('projects')
                 .update({ 
@@ -368,7 +376,6 @@
                 })
                 .eq('id', currentProjectId);
 
-            // 貢献履歴にメールアドレスを記録
             const shortName = currentUser.email.split('@')[0];
             await client
                 .from('contributions')
@@ -413,6 +420,12 @@
         }
 
         function switchTab(tabName) {
+            // 未ログイン状態のときにホームや工房タブを開こうとしたらブロックしてマイページへ強制移動
+            if (!currentUser && tabName !== 'mypage') {
+                alert("ログインが必要です。");
+                tabName = 'mypage';
+            }
+
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('view-grow').classList.add('hidden');
             document.getElementById('view-mypage').classList.add('hidden');
