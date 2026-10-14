@@ -54,7 +54,7 @@
         <!-- メインコンテンツ領域 -->
         <main id="main-content" class="flex-1 overflow-y-auto pb-20">
             
-            <!-- 【画面1：ホーム（マーケット＆みんなの工房への入り口）】 -->
+            <!-- 【画面1：ホーム（マーケット）】 -->
             <div id="view-home" class="p-4 space-y-4">
                 <div class="bg-violet-50 border border-violet-100 rounded-2xl p-4 text-violet-900 shadow-sm">
                     <h2 class="font-bold text-sm">🛍️ 共創ジュエリー・マーケット</h2>
@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <!-- 【画面2：工房（自分の宝石の育成 ＆ 紹介コード）】 -->
+            <!-- 【画面2：工房（育成 ＆ 宝石選択）】 -->
             <div id="view-grow" class="p-4 space-y-4 hidden">
                 <!-- 未選択時の宝石選択エリア -->
                 <div id="selection-area" class="space-y-3">
@@ -145,7 +145,7 @@
                 </div>
             </div>
 
-            <!-- 【画面3：みんなの工房（ポケコロ風 フレンド・ルーム一覧）】 -->
+            <!-- 【画面3：みんなの工房（フレンド・ルーム一覧）】 -->
             <div id="view-friends" class="p-4 space-y-4 hidden">
                 <div class="bg-pink-50 border border-pink-100 rounded-2xl p-4 text-pink-900 shadow-sm">
                     <h2 class="font-bold text-sm">👥 みんなの工房（フレンド・ルーム）</h2>
@@ -505,12 +505,11 @@
                 currentAuthor = data.author;
                 visitingOwnerName = ownerName;
 
-                // 宝石の難易度（レア度）に応じて進行係数を決定
-                if (currentTitle.includes('ダイヤモンド')) currentDifficulty = 4; // 100 / 4 = 25回
-                else if (currentTitle.includes('アメジスト')) currentDifficulty = 3; // 100 / 3 ≈ 33回
-                else if (currentTitle.includes('エメラルド')) currentDifficulty = 2; // 100 / 2 = 50回
-                else if (currentTitle.includes('ルビー')) currentDifficulty = 1.5;   // 100 / 1.5 ≈ 66回
-                else currentDifficulty = 1;                                      // 100 / 1 = 100回 (標準+4%)
+                if (currentTitle.includes('ダイヤモンド')) currentDifficulty = 4;
+                else if (currentTitle.includes('アメジスト')) currentDifficulty = 3;
+                else if (currentTitle.includes('エメラルド')) currentDifficulty = 2;
+                else if (currentTitle.includes('ルビー')) currentDifficulty = 1.5;
+                else currentDifficulty = 1;
 
                 updateUI();
                 document.getElementById('selection-area').classList.add('hidden');
@@ -519,7 +518,6 @@
                 const ownerTag = document.getElementById('room-owner-tag');
                 const actionBtn = document.getElementById('action-btn');
                 
-                // 増加するパーセンテージを計算してボタンに表示
                 const boostPercent = currentTitle.includes('ダイヤモンド') ? 1 : currentTitle.includes('アメジスト') ? 1.5 : currentTitle.includes('エメラルド') ? 2 : currentTitle.includes('ルビー') ? 3 : 4;
 
                 if (ownerName === currentUsername || ownerName === currentAuthor) {
@@ -659,7 +657,6 @@
             });
         }
 
-        // ─── 宝石ごとの難易度に応じた育成アクション ───
         async function performAction() {
             const { data: { session } } = await client.auth.getSession();
             currentUser = session ? session.user : null;
@@ -670,7 +667,6 @@
                 return;
             }
 
-            // 宝石に応じた上昇量（ダイヤなどは1%、標準は4%など）
             let addPercent = 4;
             if (currentTitle.includes('ダイヤモンド')) addPercent = 1;
             else if (currentTitle.includes('アメジスト')) addPercent = 1.5;
