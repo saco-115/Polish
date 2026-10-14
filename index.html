@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polish! - ログイン必須の共創ジュエリー</title>
+    <title>Polish! - 共創ジュエリープラットフォーム</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS SDK CDN -->
@@ -46,18 +46,18 @@
         <header class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-4 shadow-md flex justify-between items-center z-10">
             <div>
                 <h1 class="font-bold text-lg tracking-wider">✨ Polish!</h1>
-                <p class="text-[10px] text-violet-200">ステータス: <span id="header-status" class="font-bold text-amber-300">要ログイン</span></p>
+                <p class="text-[10px] text-violet-200">職人: <span id="header-status" class="font-bold text-amber-300">要ログイン</span></p>
             </div>
-            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">セキュリティ保護</span>
+            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">共創ジュエリー</span>
         </header>
 
         <!-- メインコンテンツ領域 -->
         <main id="main-content" class="flex-1 overflow-y-auto pb-20">
-            <!-- 【画面1：ホーム】 -->
+            <!-- 【画面1：ホーム（進行中プロジェクト ＆ 作家コラボ商品）】 -->
             <div id="view-home" class="p-4 space-y-4">
                 <div class="bg-violet-50 border border-violet-100 rounded-2xl p-4 text-violet-900 shadow-sm">
                     <h2 class="font-bold text-sm">💎 共創クラフトプロジェクト</h2>
-                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">参加するにはログインが必要です。</p>
+                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">仲間と協力して原石を最高級ジュエリーへと磨き上げよう。</p>
                 </div>
 
                 <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">進行中の共創プロジェクト</h3>
@@ -81,6 +81,20 @@
                             <button onclick="enterWorkshop()" class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
                                 工房に入る
                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ハンドメイド作家・協力者によるコラボ商品セクション -->
+                <div class="space-y-3 pt-2">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">🎨 協力作家・コラボ商品</h3>
+                        <span class="text-[10px] text-gray-400">リアルタイム出品</span>
+                    </div>
+                    
+                    <div id="collaborator-products-container" class="space-y-3">
+                        <div class="bg-white border border-dashed border-gray-200 rounded-2xl p-4 text-center text-xs text-gray-400">
+                            現在出品されているコラボ商品はありません...
                         </div>
                     </div>
                 </div>
@@ -126,17 +140,16 @@
                 </div>
             </div>
 
-            <!-- 【画面3：マイページ（ログイン・認証画面）】 -->
+            <!-- 【画面3：マイページ（プロフィール変更・購入履歴・認証）】 -->
             <div id="view-mypage" class="p-4 space-y-4 hidden">
                 <!-- 未ログイン時のフォーム -->
                 <div id="auth-container" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
                     <h3 class="font-bold text-gray-800 text-sm">🔐 ログインが必要です</h3>
                     <p class="text-[11px] text-gray-500">アプリを利用するにはメールアドレスでログインしてください。</p>
                     
-                    <!-- 登録完了後の案内メッセージ（最初は非表示） -->
                     <div id="signup-notice" class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-800 space-y-1 hidden">
                         <p class="font-bold">✉️ 確認メールを送信しました！</p>
-                        <p class="text-[11px] text-amber-700 leading-relaxed">ご登録いただいたメールアドレス宛に確認メールを送信しました。メール内のリンクを開いて認証を完了させてから、ログインしてください。</p>
+                        <p class="text-[11px] text-amber-700 leading-relaxed">メール内のリンクを開いて認証を完了させてからログインしてください。</p>
                     </div>
 
                     <div class="space-y-2 pt-1">
@@ -150,19 +163,40 @@
                     </div>
                 </div>
 
-                <!-- ログイン中の表示 -->
+                <!-- ログイン中の表示（プロフィール設定・名前変更） -->
                 <div id="user-info-container" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm hidden">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center text-xl text-violet-700 font-bold">
-                            💎
+                    <div class="flex items-center justify-between border-b border-gray-50 pb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center text-xl text-violet-700 font-bold">
+                                💎
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-xs text-gray-400">ログイン中</h3>
+                                <p class="text-xs text-violet-700 font-bold truncate max-w-[180px]" id="display-useremail">-</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-xs text-gray-500">ログイン中のアカウント</h3>
-                            <p class="text-xs text-violet-700 font-bold truncate max-w-[220px]" id="display-useremail">-</p>
-                        </div>
+                        <button onclick="handleSignOut()" class="bg-gray-100 text-gray-600 text-[11px] font-bold px-3 py-1.5 rounded-xl hover:bg-gray-200 transition">ログアウト</button>
                     </div>
 
-                    <button onclick="handleSignOut()" class="w-full bg-gray-100 text-gray-700 text-xs font-bold py-2.5 rounded-xl hover:bg-gray-200 transition">ログアウトする</button>
+                    <!-- 名前（表示名）変更フォーム -->
+                    <div class="space-y-1.5 pt-1">
+                        <label class="block text-xs font-bold text-gray-700">👤 あなたの職人名（表示名）</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="username-input" placeholder="例: 琥珀ハンター" class="flex-1 bg-gray-50 border border-gray-200 text-xs px-3 py-2 rounded-xl text-gray-700 outline-none focus:border-violet-500">
+                            <button onclick="updateUsername()" class="bg-violet-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-violet-700 transition">変更を保存</button>
+                        </div>
+                        <p class="text-[10px] text-gray-400">※貢献ログやショップに表示される名前です。</p>
+                    </div>
+                </div>
+
+                <!-- 購入履歴セクション -->
+                <div id="purchase-history-section" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm hidden">
+                    <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5">
+                        <span>🛍️</span> 購入・オーダー履歴
+                    </h3>
+                    <div id="purchase-history-container" class="space-y-2 text-xs text-gray-600">
+                        <div class="text-gray-400 text-center py-2">購入履歴はまだありません。</div>
+                    </div>
                 </div>
 
                 <div class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
@@ -192,14 +226,13 @@
     <script>
         // ─── Supabase 設定 ───
         const SUPABASE_URL = 'https://btpuoqumetkkkicobacp.supabase.co';
-        
-        // ※あなたのLegacy anonキーをここに設定してください
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cHVvcXVtZXRra2tpY29iYWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzQ5OTAsImV4cCI6MjEwNzU1MDk5MH0.x7dtxP-d1McO3Tj3WpJLA-AckQVNoLe1lZz4lOTgWn0';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cHVvcXVtZXRra2tpY29iYWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzQ5OTAsImV4cCI6MjEwNzU1MDk5MH0.x7dtxP-d1McO3Tj3WpJLA-AckQVNoLe1lZz4lOTgWn0'; // ←あなたのLegacy anonキーを入れてください
         
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentProjectId = null;
         let currentUser = null;
+        let currentUsername = '職人';
 
         let currentProgress = 5;
         let currentStage = 1;
@@ -209,6 +242,7 @@
             const { data: { session } } = await client.auth.getSession();
             if (session) {
                 currentUser = session.user;
+                await fetchUserProfile();
                 updateAuthUI();
                 switchTab('home');
             } else {
@@ -217,8 +251,11 @@
                 switchTab('mypage');
             }
 
-            client.auth.onAuthStateChange((event, session) => {
+            client.auth.onAuthStateChange(async (event, session) => {
                 currentUser = session ? session.user : null;
+                if (currentUser) {
+                    await fetchUserProfile();
+                }
                 updateAuthUI();
                 if (!currentUser) {
                     switchTab('mypage');
@@ -226,6 +263,47 @@
             });
 
             await fetchProjectAndLogs();
+            await fetchCollaboratorProducts();
+        }
+
+        // ユーザープロファイル（名前）の取得
+        async function fetchUserProfile() {
+            if (!currentUser) return;
+            const { data, error } = await client
+                .from('profiles')
+                .select('username')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (data && data.username) {
+                currentUsername = data.username;
+            } else {
+                currentUsername = currentUser.email.split('@')[0];
+            }
+            document.getElementById('username-input').value = currentUsername;
+            document.getElementById('header-status').innerText = currentUsername;
+        }
+
+        // ユーザー名（表示名）の更新
+        async function updateUsername() {
+            if (!currentUser) return;
+            const newName = document.getElementById('username-input').value.trim();
+            if (!newName) {
+                alert("名前を入力してください。");
+                return;
+            }
+
+            const { error } = await client
+                .from('profiles')
+                .upsert({ id: currentUser.id, username: newName, updated_at: new Date() });
+
+            if (error) {
+                alert("名前の更新エラー: " + error.message);
+            } else {
+                currentUsername = newName;
+                document.getElementById('header-status').innerText = currentUsername;
+                alert("職人名（表示名）を変更しました！✨");
+            }
         }
 
         async function handleSignUp() {
@@ -241,7 +319,6 @@
             if (error) {
                 alert("登録エラー: " + error.message);
             } else {
-                // 登録成功時に案内メッセージを表示
                 document.getElementById('signup-notice').classList.remove('hidden');
                 alert("確認メールを送信しました！メール内のリンクを開いて認証を完了させてください。✨");
             }
@@ -274,22 +351,133 @@
         function updateAuthUI() {
             const authContainer = document.getElementById('auth-container');
             const userInfoContainer = document.getElementById('user-info-container');
+            const purchaseHistorySection = document.getElementById('purchase-history-section');
             const headerStatus = document.getElementById('header-status');
             const displayEmail = document.getElementById('display-useremail');
 
             if (currentUser) {
                 authContainer.classList.add('hidden');
                 userInfoContainer.classList.remove('hidden');
-                headerStatus.innerText = currentUser.email.split('@')[0];
+                purchaseHistorySection.classList.remove('hidden');
+                headerStatus.innerText = currentUsername;
                 headerStatus.className = "font-bold text-amber-300";
                 displayEmail.innerText = currentUser.email;
+                fetchPurchaseHistory();
             } else {
                 authContainer.classList.remove('hidden');
                 userInfoContainer.classList.add('hidden');
+                purchaseHistorySection.classList.add('hidden');
                 headerStatus.innerText = "要ログイン";
                 headerStatus.className = "font-bold text-rose-300";
                 displayEmail.innerText = "-";
             }
+        }
+
+        // ─── コラボ商品の取得・表示（リアルタイム対応） ───
+        async function fetchCollaboratorProducts() {
+            // ※「products」テーブルからコラボ商品リストを取得
+            const { data } = await client.from('products').select('*').order('created_at', { ascending: false });
+            renderProducts(data);
+
+            // リアルタイムリスナー
+            client
+              .channel('public:products')
+              .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, async () => {
+                  const { data: updatedData } = await client.from('products').select('*').order('created_at', { ascending: false });
+                  renderProducts(updatedData);
+              })
+              .subscribe();
+        }
+
+        function renderProducts(products) {
+            const container = document.getElementById('collaborator-products-container');
+            if (!products || products.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white border border-dashed border-gray-200 rounded-2xl p-4 text-center text-xs text-gray-400">
+                        現在出品されているコラボ商品はありません...
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            products.forEach(prod => {
+                const div = document.createElement('div');
+                div.className = "bg-white border border-gray-100 rounded-2xl p-4 space-y-2 shadow-sm";
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[10px] bg-violet-50 text-violet-600 font-bold px-2 py-0.5 rounded-md">作家: ${prod.author_name}</span>
+                            <h4 class="font-bold text-gray-800 text-sm mt-1">${prod.title}</h4>
+                            <p class="text-[11px] text-gray-500">${prod.description}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-violet-600 font-bold text-sm">¥${prod.price.toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <button onclick="buyProduct('${prod.id}', '${prod.title}', ${prod.price})" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold py-2 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
+                        このコラボ商品を購入する
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 商品購入処理
+        async function buyProduct(productId, productTitle, price) {
+            if (!currentUser) {
+                alert("購入にはログインが必要です！");
+                switchTab('mypage');
+                return;
+            }
+
+            if (!confirm(`「${productTitle}」（¥${price.toLocaleString()}）を購入しますか？`)) return;
+
+            const { error } = await client
+                .from('purchases')
+                .insert([{
+                    user_id: currentUser.id,
+                    product_id: productId,
+                    product_title: productTitle,
+                    price: price
+                }]);
+
+            if (error) {
+                alert("購入エラー: " + error.message);
+            } else {
+                alert("ご購入ありがとうございます！✨ マイページの購入履歴に追加されました。");
+                fetchPurchaseHistory();
+            }
+        }
+
+        // 購入履歴の取得
+        async function fetchPurchaseHistory() {
+            if (!currentUser) return;
+            const { data } = await client
+                .from('purchases')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false });
+
+            const container = document.getElementById('purchase-history-container');
+            if (!data || data.length === 0) {
+                container.innerHTML = `<div class="text-gray-400 text-center py-2">購入履歴はまだありません。</div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(item => {
+                const dateStr = new Date(item.created_at).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                const div = document.createElement('div');
+                div.className = "bg-gray-50 p-2.5 rounded-xl flex justify-between items-center";
+                div.innerHTML = `
+                    <div>
+                        <div class="font-bold text-gray-800">${item.product_title}</div>
+                        <div class="text-[10px] text-gray-400">${dateStr} 注文</div>
+                    </div>
+                    <div class="font-bold text-violet-600">¥${item.price.toLocaleString()}</div>
+                `;
+                container.appendChild(div);
+            });
         }
 
         async function fetchProjectAndLogs() {
@@ -384,13 +572,12 @@
                 })
                 .eq('id', currentProjectId);
 
-            const shortName = currentUser.email.split('@')[0];
             await client
                 .from('contributions')
                 .insert([{
                     project_id: currentProjectId,
                     user_id: currentUser.id,
-                    username: shortName,
+                    username: currentUsername,
                     action_type: actionText
                 }]);
         }
