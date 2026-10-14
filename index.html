@@ -184,9 +184,11 @@
     </div>
 
     <script>
-        // ─── Supabase 設定 (ご自身の情報に書き換えてください) ───
-        const SUPABASE_URL = 'https://btpuoqumetkkkicobacp.supabase.co/rest/v1/';
-        const SUPABASE_ANON_KEY = 'sb_publishable_UxZIVk5LtnARhfpmogRgCg_o9UdIGXZ';
+        // ─── Supabase 設定 ───
+        const SUPABASE_URL = 'https://btpuoqumetkkkicobacp.supabase.co';
+        
+        // ↓ SupabaseのAPI画面（Publishable and secret API keys）から、あなたの「Publishable key（またはanon key）」をコピーして、下の 'ここを消してAPIキーを貼り付け' の中に入れてください！
+        const SUPABASE_ANON_KEY = 'ここを消してAPIキーを貼り付け';
         
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -198,24 +200,22 @@
         let currentMetal = '真鍮 (Brass) - ベーシック';
 
         async function initApp() {
-            // セッション確認
             const { data: { session } } = await client.auth.getSession();
             if (session) {
                 currentUser = session.user;
                 updateAuthUI();
-                switchTab('home'); // ログインしていればホームへ
+                switchTab('home');
             } else {
                 currentUser = null;
                 updateAuthUI();
-                switchTab('mypage'); // 未ログインなら強制的にマイページ（ログイン画面）へ！
+                switchTab('mypage');
             }
 
-            // 認証状態の変化を監視
             client.auth.onAuthStateChange((event, session) => {
                 currentUser = session ? session.user : null;
                 updateAuthUI();
                 if (!currentUser) {
-                    switchTab('mypage'); // ログアウトしたら強制的にマイページへ
+                    switchTab('mypage');
                 }
             });
 
@@ -420,7 +420,6 @@
         }
 
         function switchTab(tabName) {
-            // 未ログイン状態のときにホームや工房タブを開こうとしたらブロックしてマイページへ強制移動
             if (!currentUser && tabName !== 'mypage') {
                 alert("ログインが必要です。");
                 tabName = 'mypage';
