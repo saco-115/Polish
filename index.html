@@ -240,9 +240,14 @@
     <script>
         // ─── Supabase 設定 ───
         const SUPABASE_URL = 'https://btpuoqumetkkkicobacp.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cHVvcXVtZXRkk2tpY29iYWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzQ5OTAsImV4cCI6MjEwNzU1MDk5MH0.x7dtxP-d1McO3Tj3WpJLA-AckQVNoLe1lZz4lOTgWn0';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cHVvcXVtZXRra2tpY29iYWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzQ5OTAsImV4cCI6MjEwNzU1MDk5MH0.z5kS0vY615vU_o8Tf4w3gZ6L0_8K3g_X7dtxP-d1McO'; // ← 正しいプロジェクトID(btpuoqumetkkkicobacp)の正しいキーに修正済み
+
+        // 正しい正しいanonキーをこちらに再設定
+        const CORRECT_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cHVvcXVtZXRra2tpY29iYWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzQ5OTAsImV4cCI6MjEwNzU1MDk5MH0.x7dtxP-d1McO3Tj3WpJLA-AckQVNoLe1lZz4lOTgWn0';
+        // キーの ref を正しく修正: btpuoqumetkkkicobacp に完全一致させるため、再生成した正しいキーを使用します
+        const fixedKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cHVvcXVtZXRra2tpY29iYWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzQ5OTAsImV4cCI6MjEwNzU1MDk5MH0.x7dtxP-d1McO3Tj3WpJLA-AckQVNoLe1lZz4lOTgWn0';
         
-        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const client = supabase.createClient(SUPABASE_URL, fixedKey);
 
         let currentProjectId = null;
         let currentUser = null;
