@@ -305,7 +305,6 @@
                 return;
             }
 
-            // upsertで確実に対象ユーザーのレコードを更新・保存する
             const { error } = await client
                 .from('profiles')
                 .upsert({ id: currentUser.id, username: newName });
@@ -315,7 +314,7 @@
             } else {
                 currentUsername = newName;
                 document.getElementById('header-status').innerText = currentUsername;
-                alert("職人名（表示名）を変更・保存しました！✨（リロードしても保持されます）");
+                alert("職人名（表示名）を変更・保存しました！✨");
             }
         }
 
