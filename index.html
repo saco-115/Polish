@@ -133,7 +133,13 @@
                     <h3 class="font-bold text-gray-800 text-sm">🔐 ログインが必要です</h3>
                     <p class="text-[11px] text-gray-500">アプリを利用するにはメールアドレスでログインしてください。</p>
                     
-                    <div class="space-y-2">
+                    <!-- 登録完了後の案内メッセージ（最初は非表示） -->
+                    <div id="signup-notice" class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-800 space-y-1 hidden">
+                        <p class="font-bold">✉️ 確認メールを送信しました！</p>
+                        <p class="text-[11px] text-amber-700 leading-relaxed">ご登録いただいたメールアドレス宛に確認メールを送信しました。メール内のリンクを開いて認証を完了させてから、ログインしてください。</p>
+                    </div>
+
+                    <div class="space-y-2 pt-1">
                         <input type="email" id="auth-email" placeholder="メールアドレス" class="w-full bg-gray-50 border border-gray-200 text-xs px-3 py-2.5 rounded-xl text-gray-700 outline-none focus:border-violet-500">
                         <input type="password" id="auth-password" placeholder="パスワード (6文字以上)" class="w-full bg-gray-50 border border-gray-200 text-xs px-3 py-2.5 rounded-xl text-gray-700 outline-none focus:border-violet-500">
                         
@@ -187,7 +193,7 @@
         // ─── Supabase 設定 ───
         const SUPABASE_URL = 'https://btpuoqumetkkkicobacp.supabase.co';
         
-        // ↓ SupabaseのAPI画面（Publishable and secret API keys）から、あなたの「Publishable key（またはanon key）」をコピーして、下の 'ここを消してAPIキーを貼り付け' の中に入れてください！
+        // ※あなたのLegacy anonキーをここに設定してください
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cHVvcXVtZXRra2tpY29iYWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzQ5OTAsImV4cCI6MjEwNzU1MDk5MH0.x7dtxP-d1McO3Tj3WpJLA-AckQVNoLe1lZz4lOTgWn0';
         
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -235,7 +241,9 @@
             if (error) {
                 alert("登録エラー: " + error.message);
             } else {
-                alert("登録が完了しました！そのままログインできます。✨");
+                // 登録成功時に案内メッセージを表示
+                document.getElementById('signup-notice').classList.remove('hidden');
+                alert("確認メールを送信しました！メール内のリンクを開いて認証を完了させてください。✨");
             }
         }
 
