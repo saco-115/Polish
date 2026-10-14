@@ -48,7 +48,7 @@
                 <h1 class="font-bold text-lg tracking-wider">✨ Polish!</h1>
                 <p class="text-[10px] text-violet-200">職人: <span id="header-status" class="font-bold text-amber-300">確認中...</span></p>
             </div>
-            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">ポケコロ風共創</span>
+            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">共創ジュエリー</span>
         </header>
 
         <!-- メインコンテンツ領域 -->
@@ -64,7 +64,7 @@
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">✨ コラボ商品・完成品一覧</h3>
-                        <button onclick="switchTab('friends')" class="text-[11px] text-violet-600 font-bold hover:underline">👥 友達の工房を覗く →</button>
+                        <button onclick="switchTab('friends')" class="text-[11px] text-violet-600 font-bold hover:underline">👥 みんなの工房へ →</button>
                     </div>
                     <div id="collaborator-products-container" class="space-y-3">
                         <div class="bg-white border border-dashed border-gray-200 rounded-2xl p-4 text-center text-xs text-gray-400">
@@ -126,7 +126,7 @@
                     <!-- 紹介コード・シェアセクション -->
                     <div class="bg-white border border-violet-100 rounded-2xl p-4 space-y-2 shadow-sm">
                         <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5">
-                            <span>🔗</span> 友達を招待して一緒に育てる（紹介コード）
+                            <span>🔗</span> 仲間を招待して一緒に育てる（紹介コード）
                         </h3>
                         <p class="text-[11px] text-gray-500">このコードを友達にシェアして、一緒にプロジェクトの完成度を上げよう！</p>
                         <div class="flex gap-2">
@@ -145,11 +145,11 @@
                 </div>
             </div>
 
-            <!-- 【画面3：みんなの工房（フレンド・ルーム一覧）】 -->
+            <!-- 【画面3：みんなの工房（ルーム一覧）】 -->
             <div id="view-friends" class="p-4 space-y-4 hidden">
-                <div class="bg-pink-50 border border-pink-100 rounded-2xl p-4 text-pink-900 shadow-sm">
-                    <h2 class="font-bold text-sm">👥 みんなの工房（フレンド・ルーム）</h2>
-                    <p class="text-xs mt-1 text-pink-700 leading-relaxed">友達の工房に遊びに行き、おてつだいハンマーで宝石を一緒に磨いてあげよう！✨</p>
+                <div class="bg-violet-50 border border-violet-100 rounded-2xl p-4 text-violet-900 shadow-sm">
+                    <h2 class="font-bold text-sm">👥 みんなの工房（ルーム一覧）</h2>
+                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">他の職人の工房に遊びに行き、おてつだいハンマーで宝石を一緒に磨いてあげよう！✨</p>
                 </div>
 
                 <div class="space-y-3">
@@ -281,13 +281,13 @@
 
         async function fetchUserProfile() {
             if (!currentUser) return;
-            const { data } = await client
+            const { data, error } = await client
                 .from('profiles')
                 .select('username')
                 .eq('id', currentUser.id)
                 .single();
 
-            if (data && data.username) {
+            if (!error && data && data.username) {
                 currentUsername = data.username;
             } else {
                 currentUsername = currentUser.email.split('@')[0];
@@ -305,6 +305,7 @@
                 return;
             }
 
+            // upsertで確実に対象ユーザーのレコードを更新・保存する
             const { error } = await client
                 .from('profiles')
                 .upsert({ id: currentUser.id, username: newName });
@@ -314,7 +315,7 @@
             } else {
                 currentUsername = newName;
                 document.getElementById('header-status').innerText = currentUsername;
-                alert("職人名（表示名）を変更しました！✨");
+                alert("職人名（表示名）を変更・保存しました！✨（リロードしても保持されます）");
             }
         }
 
@@ -406,18 +407,18 @@
         function renderProjectsList(projects) {
             const container = document.getElementById('project-list-container');
             if (!projects || projects.length === 0) {
-                container.innerHTML = `<div class="bg-white p-4 text-center text-xs text-gray-400 rounded-2xl">育成可能な原石がありません。</div>`;
+                container.innerHTML = `<div class="bg-white p-4 text-center text-xs text-gray-400 rounded-2xl">育成可能な原石がありません。<br>SupabaseのSQLエディタで初期データを挿入してください。</div>`;
                 return;
             }
 
             container.innerHTML = '';
             projects.forEach(proj => {
-                let diffBadge = '⭐ 難易度: 標準 (+4%)';
+                let diffBadge = '⭐ 標準 (+4%)';
                 let diffColor = 'bg-blue-50 text-blue-600';
-                if (proj.title.includes('ルビー')) { diffBadge = '⭐⭐ 難易度: やや困難 (+3%)'; diffColor = 'bg-amber-50 text-amber-600'; }
-                else if (proj.title.includes('エメラルド')) { diffBadge = '⭐⭐⭐ 難易度: 困難 (+2%)'; diffColor = 'bg-emerald-50 text-emerald-600'; }
-                else if (proj.title.includes('アメジスト')) { diffBadge = '⭐⭐⭐⭐ 難易度: 超困難 (+1.5%)'; diffColor = 'bg-purple-50 text-purple-600'; }
-                else if (proj.title.includes('ダイヤモンド')) { diffBadge = '⭐⭐⭐⭐⭐ 難易度: 至難の業 (+1%)'; diffColor = 'bg-rose-50 text-rose-600'; }
+                if (proj.title.includes('ルビー')) { diffBadge = '⭐⭐ やや困難 (+3%)'; diffColor = 'bg-amber-50 text-amber-600'; }
+                else if (proj.title.includes('エメラルド')) { diffBadge = '⭐⭐⭐ 困難 (+2%)'; diffColor = 'bg-emerald-50 text-emerald-600'; }
+                else if (proj.title.includes('アメジスト')) { diffBadge = '⭐⭐⭐⭐ 超困難 (+1.5%)'; diffColor = 'bg-purple-50 text-purple-600'; }
+                else if (proj.title.includes('ダイヤモンド')) { diffBadge = '⭐⭐⭐⭐⭐ 至難の業 (+1%)'; diffColor = 'bg-rose-50 text-rose-600'; }
 
                 const div = document.createElement('div');
                 div.className = "bg-white border border-gray-100 rounded-2xl p-4 flex justify-between items-center shadow-sm";
@@ -467,17 +468,17 @@
                 else if (proj.title.includes('ダイヤモンド')) boostText = 'おてつだい +1%';
 
                 const div = document.createElement('div');
-                div.className = "bg-white border border-pink-100 rounded-2xl p-4 flex justify-between items-center shadow-sm hover:border-pink-300 transition";
+                div.className = "bg-white border border-gray-100 rounded-2xl p-4 flex justify-between items-center shadow-sm hover:border-violet-200 transition";
                 div.innerHTML = `
                     <div>
                         <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] bg-pink-100 text-pink-800 font-bold px-2 py-0.5 rounded-md">🏠 ${proj.author}のルーム</span>
+                            <span class="text-[10px] bg-violet-50 text-violet-800 font-bold px-2 py-0.5 rounded-md">🏠 ${proj.author}のルーム</span>
                             <span class="text-[10px] text-violet-600 font-bold">${proj.progress}%</span>
                         </div>
                         <h4 class="font-bold text-gray-800 text-sm mt-1">${proj.title}</h4>
                         <p class="text-[10px] text-gray-400">${boostText}</p>
                     </div>
-                    <button onclick="visitFriendRoom('${proj.id}', '${proj.author}')" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
+                    <button onclick="visitFriendRoom('${proj.id}', '${proj.author}')" class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
                         おてつだいする 🔨
                     </button>
                 `;
@@ -526,7 +527,7 @@
                     actionBtn.innerText = `🔨 削り・磨きアクションを行う (+${boostPercent}%)`;
                 } else {
                     ownerTag.innerText = `🏠 ${ownerName}さんの工房にお邪魔中`;
-                    ownerTag.className = "text-[10px] bg-pink-200 text-pink-800 font-bold px-2 py-0.5 rounded-full";
+                    ownerTag.className = "text-[10px] bg-violet-200 text-violet-800 font-bold px-2 py-0.5 rounded-full";
                     actionBtn.innerText = `🔨 ${ownerName}さんの宝石をおてつだい磨きする (+${boostPercent}%)`;
                 }
 
@@ -549,7 +550,7 @@
             const codeBox = document.getElementById('invite-code-box');
             codeBox.select();
             navigator.clipboard.writeText(codeBox.value);
-            alert("紹介コードをコピーしました！お友達にシェアしよう ✨");
+            alert("紹介コードをコピーしました！仲間とシェアしよう ✨");
         }
 
         async function fetchCollaboratorProducts() {
