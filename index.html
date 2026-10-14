@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polish! - 原石から仕立てる共創ジュエリー</title>
+    <title>Polish! - 個別登録 & リアルタイム共創ジュエリー</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS SDK CDN -->
@@ -46,40 +46,39 @@
         <header class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-4 shadow-md flex justify-between items-center z-10">
             <div>
                 <h1 class="font-bold text-lg tracking-wider">✨ Polish!</h1>
-                <p class="text-[10px] text-violet-200">こんにちは、<span id="header-username">ゲスト職人</span>さん</p>
+                <p class="text-[10px] text-violet-200">職人: <span id="header-username" class="font-bold text-amber-300">未登録 (マイページへ)</span></p>
             </div>
-            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">リアルタイム同期中</span>
+            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">マルチ同期中</span>
         </header>
 
         <!-- メインコンテンツ領域 -->
         <main id="main-content" class="flex-1 overflow-y-auto pb-20">
-            <!-- 【画面1：ホーム（プロジェクト一覧）】 -->
+            <!-- 【画面1：ホーム】 -->
             <div id="view-home" class="p-4 space-y-4">
                 <div class="bg-violet-50 border border-violet-100 rounded-2xl p-4 text-violet-900 shadow-sm">
-                    <h2 class="font-bold text-sm">💎 リアルタイム共創クラフト</h2>
-                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">友達が削ったり磨いたりした進捗が、あなたの画面にもリアルタイムで同期されます！</p>
+                    <h2 class="font-bold text-sm">💎 仲間と一緒に創り上げる</h2>
+                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">まずは「マイページ」で自分の職人ネームを登録して、工房へ参加しよう！</p>
                 </div>
 
                 <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">進行中の共創プロジェクト</h3>
 
-                <!-- 商品カード1 -->
-                <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
-                    <div class="bg-stone-900 h-44 flex items-center justify-center text-4xl relative">
+                <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="bg-stone-900 h-40 flex items-center justify-center text-4xl relative">
                         🪨
-                        <span class="absolute top-3 left-3 text-[10px] bg-amber-400 text-stone-900 font-bold px-2 py-0.5 rounded-full">同期中ルーム</span>
+                        <span class="absolute top-3 left-3 text-[10px] bg-amber-400 text-stone-900 font-bold px-2 py-0.5 rounded-full">共同制作ルーム</span>
                     </div>
                     <div class="p-4 space-y-3">
                         <div>
                             <span class="text-[10px] text-violet-600 font-bold bg-violet-50 px-2 py-0.5 rounded-md">Atelier Lumière 監修</span>
                             <h4 id="card-title-1" class="font-bold text-gray-800 text-sm mt-1">月夜の雫 琥珀原石</h4>
-                            <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-2">「みんなで協力してK18ゴールド仕様へ進化させよう！」</p>
+                            <p class="text-[11px] text-gray-500">「みんなの削り・磨きでK18ゴールド仕様へ進化させよう！」</p>
                         </div>
                         <div class="flex justify-between items-end pt-2 border-t border-gray-50">
                             <div>
                                 <span class="text-xs text-gray-400 line-through">通常 ¥9,800</span>
                                 <div class="text-violet-600 font-bold text-base">共同特価 ¥4,900</div>
                             </div>
-                            <button onclick="joinProject('月夜の雫 琥珀原石', 'Atelier Lumière')" class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
+                            <button onclick="enterWorkshop()" class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
                                 工房に入る
                             </button>
                         </div>
@@ -87,52 +86,47 @@
                 </div>
             </div>
 
-            <!-- 【画面2：工房（リアルタイム同期画面）】 -->
+            <!-- 【画面2：工房（リアルタイム進行 & 貢献ログ）】 -->
             <div id="view-grow" class="p-4 space-y-4 hidden">
                 <div class="text-center space-y-1 py-1">
                     <span id="project-badge" class="text-[10px] bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full">⛏️ 段階1：荒削り（ハンマー作業）</span>
                     <h2 id="current-item-title" class="font-bold text-gray-800 text-base pt-1">月夜の雫 琥珀原石</h2>
-                    <p id="current-author" class="text-xs text-violet-600 font-medium">Atelier Lumière</p>
+                    <p class="text-xs text-violet-600 font-medium">Atelier Lumière</p>
                 </div>
 
                 <!-- ビジュアルエリア -->
-                <div class="bg-gradient-to-b from-stone-900 to-slate-900 rounded-3xl p-6 text-white text-center relative overflow-hidden shadow-inner border border-stone-800">
-                    <div id="gem-icon" class="text-6xl my-3 transition-transform duration-300 transform scale-100">
-                        🪨
-                    </div>
+                <div class="bg-gradient-to-b from-stone-900 to-slate-900 rounded-3xl p-5 text-white text-center relative overflow-hidden shadow-inner border border-stone-800">
+                    <div id="gem-icon" class="text-5xl my-2">🪨</div>
                     
-                    <!-- 金属ランク表示 -->
-                    <div class="my-2">
-                        <span class="text-[10px] uppercase tracking-widest text-stone-400">現在の土台金属 (同期中)</span>
-                        <div id="metal-rank-display" class="text-sm font-bold text-amber-400">真鍮 (Brass) - ベーシック</div>
+                    <div class="my-1">
+                        <span class="text-[10px] uppercase tracking-widest text-stone-400">現在の土台金属</span>
+                        <div id="metal-rank-display" class="text-xs font-bold text-amber-400">真鍮 (Brass) - ベーシック</div>
                     </div>
 
-                    <div class="text-xs text-violet-300 font-semibold mb-1">完成度 (進捗): <span id="progress-text">5</span>%</div>
+                    <div class="text-xs text-violet-300 font-semibold mb-1">完成度: <span id="progress-text">5</span>%</div>
                     
-                    <!-- プログレスバー -->
-                    <div class="w-full bg-stone-800 h-3 rounded-full overflow-hidden p-0.5 border border-stone-700">
+                    <div class="w-full bg-stone-800 h-2.5 rounded-full overflow-hidden p-0.5 border border-stone-700">
                         <div id="progress-bar" class="bg-gradient-to-r from-amber-400 to-violet-400 h-full rounded-full transition-all duration-300" style="width: 5%;"></div>
                     </div>
 
-                    <p id="status-message" class="text-[11px] text-stone-300 mt-3 leading-relaxed">ボタンを押すと、Supabase経由で他の人の画面にも即時反映されます！</p>
+                    <p id="status-message" class="text-[11px] text-stone-300 mt-2">あなたの名前で作業を実行しよう！</p>
                 </div>
 
                 <!-- アクションボタン -->
-                <button id="action-btn" onclick="performAction()" class="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white font-bold py-3.5 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm">
+                <button id="action-btn" onclick="performAction()" class="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white font-bold py-3 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm">
                     🔨 削り・磨きアクションを行う (+6%)
                 </button>
 
-                <!-- 友達へのシェアセクション -->
-                <div class="bg-violet-50/60 border border-violet-100 rounded-2xl p-4 space-y-3">
-                    <h3 class="font-bold text-xs text-violet-900">💬 別タブでURLを開いて同期テストしよう！</h3>
-                    <div class="flex gap-2">
-                        <input type="text" id="share-url-input" readonly class="bg-white border border-violet-200 text-xs px-3 py-2 rounded-xl flex-1 text-gray-600 outline-none">
-                        <button onclick="copyLink()" class="bg-violet-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-violet-700 transition">URLコピー</button>
+                <!-- リアルタイム貢献ログ -->
+                <div class="bg-white border border-gray-100 rounded-2xl p-3 space-y-2 shadow-sm">
+                    <h3 class="font-bold text-xs text-gray-800">📜 職人たちの貢献ライブログ</h3>
+                    <div id="log-container" class="space-y-1 max-h-24 overflow-y-auto text-[11px] text-gray-600 bg-gray-50 p-2 rounded-xl">
+                        <div class="text-gray-400">まだアクション履歴はありません...</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 【画面3：マイページ】 -->
+            <!-- 【画面3：マイページ（個別ユーザー登録）】 -->
             <div id="view-mypage" class="p-4 space-y-4 hidden">
                 <div class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
                     <div class="flex items-center gap-3">
@@ -140,23 +134,24 @@
                             💎
                         </div>
                         <div>
-                            <h3 class="font-bold text-gray-800 text-sm" id="display-username">ゲスト職人</h3>
-                            <p class="text-xs text-violet-600 font-medium">職人レベル: クラフター</p>
+                            <h3 class="font-bold text-gray-800 text-sm" id="display-username">未登録</h3>
+                            <p class="text-xs text-violet-600 font-medium">登録職人ステータス</p>
                         </div>
                     </div>
 
                     <div class="pt-3 border-t border-gray-100 space-y-2">
-                        <label class="block text-xs font-bold text-gray-700">職人ネーム（表示名）を変更</label>
+                        <label class="block text-xs font-bold text-gray-700">あなたの職人ネーム（登録・変更）</label>
                         <div class="flex gap-2">
-                            <input type="text" id="username-input" placeholder="例：ルビーの匠" class="bg-gray-50 border border-gray-200 text-xs px-3 py-2 rounded-xl flex-1 text-gray-700 outline-none focus:border-violet-500">
-                            <button onclick="saveProfile()" class="bg-violet-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-violet-700 transition">保存</button>
+                            <input type="text" id="username-input" placeholder="例：ルビーの匠 〇〇" class="bg-gray-50 border border-gray-200 text-xs px-3 py-2 rounded-xl flex-1 text-gray-700 outline-none focus:border-violet-500">
+                            <button onclick="registerUser()" class="bg-violet-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-violet-700 transition">登録</button>
                         </div>
+                        <p class="text-[10px] text-gray-400">※名前を登録すると、工房での作業履歴にあなたの名前が記録されます。</p>
                     </div>
                 </div>
 
                 <div class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
-                    <h3 class="font-bold text-gray-800 text-xs">接続ステータス</h3>
-                    <p class="text-xs text-emerald-600 font-bold">🟢 Supabase リアルタイム接続中</p>
+                    <h3 class="font-bold text-gray-800 text-xs">データベース接続</h3>
+                    <p class="text-xs text-emerald-600 font-bold">🟢 Supabase 個別ユーザー & リアルタイム同期中</p>
                 </div>
             </div>
         </main>
@@ -180,39 +175,77 @@
 
     <script>
         // ─── Supabase 設定 (ご自身の情報に書き換えてください) ───
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        const SUPABASE_URL = 'https://saco-115.github.io/Polish/';
+        const SUPABASE_ANON_KEY = 'https://btpuoqumetkkkicobacp.supabase.co/rest/v1/';
         
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentProjectId = null;
+        let currentUserId = localStorage.getItem('polish_user_id') || null;
+        let currentUsername = localStorage.getItem('polish_username') || null;
+
         let currentProgress = 5;
         let currentStage = 1;
         let currentMetal = '真鍮 (Brass) - ベーシック';
 
-        function initApp() {
-            const savedName = localStorage.getItem('polish_username');
-            if (savedName) {
-                document.getElementById('display-username').innerText = savedName;
-                document.getElementById('header-username').innerText = savedName;
-                document.getElementById('username-input').value = savedName;
+        async function initApp() {
+            if (currentUsername && currentUserId) {
+                document.getElementById('display-username').innerText = currentUsername;
+                document.getElementById('header-username').innerText = currentUsername;
+                document.getElementById('username-input').value = currentUsername;
+            } else {
+                // 未登録なら自動でマイページへ誘導
+                switchTab('mypage');
             }
-            document.getElementById('share-url-input').value = window.location.href;
-            
-            // 初回プロジェクトIDを自動取得（デモ用として最初の1件をロード）
-            fetchLatestProject();
+
+            // プロジェクトと最新ログの取得
+            await fetchProjectAndLogs();
         }
 
-        async function fetchLatestProject() {
-            const { data, error } = await client.from('projects').select('*').limit(1).single();
-            if (data) {
-                currentProjectId = data.id;
-                currentProgress = data.progress;
-                currentStage = data.stage;
-                currentMetal = data.metal_name;
-                updateUI(data.title, data.author);
-                
-                // リアルタイム購読（他のユーザーの変更を即時反映）
+        async function registerUser() {
+            const inputName = document.getElementById('username-input').value.trim();
+            if (!inputName) {
+                alert("名前を入力してください。");
+                return;
+            }
+
+            // Supabaseの profiles テーブルにユーザーを登録
+            const { data, error } = await client
+                .from('profiles')
+                .insert([{ username: inputName }])
+                .select()
+                .single();
+
+            if (error) {
+                alert("登録エラーが発生しました");
+                console.error(error);
+                return;
+            }
+
+            currentUserId = data.id;
+            currentUsername = data.username;
+
+            localStorage.setItem('polish_user_id', currentUserId);
+            localStorage.setItem('polish_username', currentUsername);
+
+            document.getElementById('display-username').innerText = currentUsername;
+            document.getElementById('header-username').innerText = currentUsername;
+
+            alert("職人登録が完了しました！✨ 工房へ進みましょう！");
+            switchTab('home');
+        }
+
+        async function fetchProjectAndLogs() {
+            // プロジェクト取得
+            const { data: projData } = await client.from('projects').select('*').limit(1).single();
+            if (projData) {
+                currentProjectId = projData.id;
+                currentProgress = projData.progress;
+                currentStage = projData.stage;
+                currentMetal = projData.metal_name;
+                updateUI(projData.title, projData.author);
+
+                // リアルタイム購読（プロジェクトの更新）
                 client
                   .channel('public:projects')
                   .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'projects' }, payload => {
@@ -226,26 +259,71 @@
                   })
                   .subscribe();
             }
+
+            // 初期ログ取得
+            fetchLogs();
+
+            // リアルタイム購読（貢献ログの追加）
+            client
+              .channel('public:contributions')
+              .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'contributions' }, payload => {
+                  appendLog(payload.new.username, payload.new.action_type);
+              })
+              .subscribe();
         }
 
-        async function joinProject(title, author) {
+        async function fetchLogs() {
+            const { data } = await client.from('contributions').select('*').order('created_at', { ascending: false }).limit(5);
+            if (data && data.length > 0) {
+                const container = document.getElementById('log-container');
+                container.innerHTML = '';
+                data.reverse().forEach(log => {
+                    const div = document.createElement('div');
+                    div.innerText = `✨ ${log.username}さんが${log.action_type}`;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        function appendLog(username, actionText) {
+            const container = document.getElementById('log-container');
+            // 「まだ履歴はありません」を消す
+            if (container.innerText.includes('まだ履歴はありません')) {
+                container.innerHTML = '';
+            }
+            const div = document.createElement('div');
+            div.innerText = `✨ ${username}さんが${actionText}`;
+            container.prepend(div);
+        }
+
+        function enterWorkshop() {
+            if (!currentUsername) {
+                alert("先にマイページで職人ネームを登録してください！");
+                switchTab('mypage');
+                return;
+            }
             switchTab('grow');
         }
 
         async function performAction() {
-            if (!currentProjectId) return;
+            if (!currentProjectId || !currentUserId) {
+                alert("先にマイページで職人登録をしてください！");
+                switchTab('mypage');
+                return;
+            }
 
             currentProgress += 6;
             if (currentProgress > 100) currentProgress = 100;
 
-            if (currentProgress <= 20) currentStage = 1;
-            else if (currentProgress <= 45) { currentStage = 2; currentMetal = '真鍮 (Brass) - ルース整形中'; }
-            else if (currentProgress <= 70) { currentStage = 3; currentMetal = '✨ シルバー925 (Sterling Silver) に進化！'; }
-            else if (currentProgress < 100) { currentStage = 4; currentMetal = '👑 最高級 K18ゴールド仕様 に進化！'; }
-            else { currentStage = 5; currentMetal = '🌟 プレミアムK18ジュエリー確定'; }
+            let actionText = "ハンマーで荒削りしました！";
+            if (currentProgress <= 20) { currentStage = 1; actionText = "ハンマーで荒削りしました！"; }
+            else if (currentProgress <= 45) { currentStage = 2; currentMetal = '真鍮 (Brass) - ルース整形中'; actionText = "やすりで形を整えました！"; }
+            else if (currentProgress <= 70) { currentStage = 3; currentMetal = '✨ シルバー925 (Sterling Silver) に進化！'; actionText = "クロスで下地を磨きました（シルバー進化）！"; }
+            else if (currentProgress < 100) { currentStage = 4; currentMetal = '👑 最高級 K18ゴールド仕様 に進化！'; actionText = "鏡面仕上げを行いました（K18進化）！"; }
+            else { currentStage = 5; currentMetal = '🌟 プレミアムK18ジュエリー確定'; actionText = "最後の仕上げを完了させました！"; }
 
-            // Supabaseのデータを更新（これによって他の人の画面もリアルタイムに変わる！）
-            const { error } = await client
+            // 1. プロジェクトの進捗を更新
+            await client
                 .from('projects')
                 .update({ 
                     progress: currentProgress, 
@@ -255,14 +333,19 @@
                 })
                 .eq('id', currentProjectId);
 
-            if (error) {
-                console.error("更新エラー:", error);
-            }
+            // 2. 貢献履歴（誰が何をしたか）を記録
+            await client
+                .from('contributions')
+                .insert([{
+                    project_id: currentProjectId,
+                    user_id: currentUserId,
+                    username: currentUsername,
+                    action_type: actionText
+                }]);
         }
 
         function updateUI(title, author) {
             document.getElementById('current-item-title').innerText = title;
-            document.getElementById('current-author').innerText = author;
             document.getElementById('progress-bar').style.width = currentProgress + '%';
             document.getElementById('progress-text').innerText = currentProgress;
             document.getElementById('metal-rank-display').innerText = currentMetal;
@@ -275,8 +358,6 @@
             if (currentStage === 1) {
                 badge.innerText = "⛏️ 段階1：荒削り（ハンマー作業）";
                 icon.innerText = "🪨";
-                actionBtn.innerHTML = "🔨 削り・磨きアクションを行う (+6%)";
-                statusMsg.innerText = "リアルタイム同期中！ボタンを押すと他の人の画面も一緒に進みます。";
             } else if (currentStage === 2) {
                 badge.innerText = "📐 段階2：面取り・形状出し";
                 icon.innerText = "⛏️";
@@ -290,18 +371,8 @@
                 badge.innerText = "🎉 制作＆金属進化 完了！";
                 icon.innerText = "✨💍✨";
                 actionBtn.innerHTML = "🎉 特価オーダー確定済み";
-                actionBtn.className = "w-full bg-emerald-600 text-white font-bold py-3.5 rounded-2xl shadow-md cursor-default text-sm";
-                statusMsg.innerText = "おめでとうございます！プロジェクトが達成され、K18ゴールド仕様の製作が確定しました。";
-            }
-        }
-
-        function saveProfile() {
-            const inputName = document.getElementById('username-input').value.trim();
-            if (inputName) {
-                localStorage.setItem('polish_username', inputName);
-                document.getElementById('display-username').innerText = inputName;
-                document.getElementById('header-username').innerText = inputName;
-                alert("職人ネームを「 " + inputName + " 」に更新しました！✨");
+                actionBtn.className = "w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl shadow-md cursor-default text-sm";
+                statusMsg.innerText = "おめでとうございます！K18ゴールド仕様の製作が確定しました。";
             }
         }
 
@@ -316,10 +387,6 @@
 
             document.getElementById('view-' + tabName).classList.remove('hidden');
             document.getElementById('nav-' + tabName).className = "flex flex-col items-center text-violet-600 transition";
-        }
-
-        function copyLink() {
-            alert("共創プロジェクトのURLをコピーしました！別のブラウザやタブで開いて同期を試してみよう！");
         }
     </script>
 </body>
