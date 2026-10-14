@@ -12,20 +12,6 @@
         body {
             background-color: #f3f4f6;
             display: flex;
-            justify-content: center;<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polish! - 共創ジュエリープラットフォーム</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase JS SDK CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body {
-            background-color: #f3f4f6;
-            display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -132,7 +118,7 @@
                         <p id="status-message" class="text-[11px] text-stone-300 mt-2">タップして原石を磨こう！</p>
                     </div>
 
-                    <!-- アクションボタン（自分または友達の宝石でお手伝い用テキストが変化） -->
+                    <!-- アクションボタン -->
                     <button id="action-btn" onclick="performAction()" class="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white font-bold py-3 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm">
                         🔨 削り・磨きアクションを行う
                     </button>
@@ -268,7 +254,7 @@
         let currentTitle = '原石';
         let currentAuthor = '';
         let currentDifficulty = 1;
-        let visitingOwnerName = null; // 訪問中のルームオーナー名（ポケコロ風）
+        let visitingOwnerName = null;
 
         async function initApp() {
             const { data: { session } } = await client.auth.getSession();
@@ -404,7 +390,6 @@
             }
         }
 
-        // ─── 宝石プロジェクト一覧の取得・選択 ───
         async function fetchProjectsList() {
             const { data } = await client.from('projects').select('*').order('created_at', { ascending: true });
             renderProjectsList(data);
@@ -427,12 +412,12 @@
 
             container.innerHTML = '';
             projects.forEach(proj => {
-                let diffBadge = '⭐ 難易度: 標準';
+                let diffBadge = '⭐ 難易度: 標準 (+4%)';
                 let diffColor = 'bg-blue-50 text-blue-600';
-                if (proj.title.includes('ルビー')) { diffBadge = '⭐⭐ 難易度: やや困難'; diffColor = 'bg-amber-50 text-amber-600'; }
-                else if (proj.title.includes('エメラルド')) { diffBadge = '⭐⭐⭐ 難易度: 困難'; diffColor = 'bg-emerald-50 text-emerald-600'; }
-                else if (proj.title.includes('アメジスト')) { diffBadge = '⭐⭐⭐⭐ 難易度: 超困難'; diffColor = 'bg-purple-50 text-purple-600'; }
-                else if (proj.title.includes('ダイヤモンド')) { diffBadge = '⭐⭐⭐⭐⭐ 難易度: 至難の業'; diffColor = 'bg-rose-50 text-rose-600'; }
+                if (proj.title.includes('ルビー')) { diffBadge = '⭐⭐ 難易度: やや困難 (+3%)'; diffColor = 'bg-amber-50 text-amber-600'; }
+                else if (proj.title.includes('エメラルド')) { diffBadge = '⭐⭐⭐ 難易度: 困難 (+2%)'; diffColor = 'bg-emerald-50 text-emerald-600'; }
+                else if (proj.title.includes('アメジスト')) { diffBadge = '⭐⭐⭐⭐ 難易度: 超困難 (+1.5%)'; diffColor = 'bg-purple-50 text-purple-600'; }
+                else if (proj.title.includes('ダイヤモンド')) { diffBadge = '⭐⭐⭐⭐⭐ 難易度: 至難の業 (+1%)'; diffColor = 'bg-rose-50 text-rose-600'; }
 
                 const div = document.createElement('div');
                 div.className = "bg-white border border-gray-100 rounded-2xl p-4 flex justify-between items-center shadow-sm";
@@ -453,7 +438,6 @@
             });
         }
 
-        // ─── ポケコロ風：「みんなの工房（フレンド・ルーム）」機能 ───
         async function fetchFriendsRooms() {
             const { data } = await client.from('projects').select('*').order('progress', { ascending: false });
             renderFriendsRooms(data);
@@ -476,6 +460,12 @@
 
             container.innerHTML = '';
             projects.forEach(proj => {
+                let boostText = 'おてつだい +4%';
+                if (proj.title.includes('ルビー')) boostText = 'おてつだい +3%';
+                else if (proj.title.includes('エメラルド')) boostText = 'おてつだい +2%';
+                else if (proj.title.includes('アメジスト')) boostText = 'おてつだい +1.5%';
+                else if (proj.title.includes('ダイヤモンド')) boostText = 'おてつだい +1%';
+
                 const div = document.createElement('div');
                 div.className = "bg-white border border-pink-100 rounded-2xl p-4 flex justify-between items-center shadow-sm hover:border-pink-300 transition";
                 div.innerHTML = `
@@ -485,7 +475,7 @@
                             <span class="text-[10px] text-violet-600 font-bold">${proj.progress}%</span>
                         </div>
                         <h4 class="font-bold text-gray-800 text-sm mt-1">${proj.title}</h4>
-                        <p class="text-[10px] text-gray-400">現在地: ${proj.metal_name}</p>
+                        <p class="text-[10px] text-gray-400">${boostText}</p>
                     </div>
                     <button onclick="visitFriendRoom('${proj.id}', '${proj.author}')" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
                         おてつだいする 🔨
@@ -513,29 +503,33 @@
                 currentMetal = data.metal_name;
                 currentTitle = data.title;
                 currentAuthor = data.author;
-                visitingOwnerName = ownerName; // 友達のルームに訪問中！
+                visitingOwnerName = ownerName;
 
-                if (currentTitle.includes('ダイヤモンド')) currentDifficulty = 5;
-                else if (currentTitle.includes('アメジスト')) currentDifficulty = 4;
-                else if (currentTitle.includes('エメラルド')) currentDifficulty = 3;
-                else if (currentTitle.includes('ルビー')) currentDifficulty = 2;
-                else currentDifficulty = 1;
+                // 宝石の難易度（レア度）に応じて進行係数を決定
+                if (currentTitle.includes('ダイヤモンド')) currentDifficulty = 4; // 100 / 4 = 25回
+                else if (currentTitle.includes('アメジスト')) currentDifficulty = 3; // 100 / 3 ≈ 33回
+                else if (currentTitle.includes('エメラルド')) currentDifficulty = 2; // 100 / 2 = 50回
+                else if (currentTitle.includes('ルビー')) currentDifficulty = 1.5;   // 100 / 1.5 ≈ 66回
+                else currentDifficulty = 1;                                      // 100 / 1 = 100回 (標準+4%)
 
                 updateUI();
                 document.getElementById('selection-area').classList.add('hidden');
                 document.getElementById('workshop-area').classList.remove('hidden');
 
-                // オーナータグの切り替え
                 const ownerTag = document.getElementById('room-owner-tag');
                 const actionBtn = document.getElementById('action-btn');
+                
+                // 増加するパーセンテージを計算してボタンに表示
+                const boostPercent = currentTitle.includes('ダイヤモンド') ? 1 : currentTitle.includes('アメジスト') ? 1.5 : currentTitle.includes('エメラルド') ? 2 : currentTitle.includes('ルビー') ? 3 : 4;
+
                 if (ownerName === currentUsername || ownerName === currentAuthor) {
                     ownerTag.innerText = "マイ工房";
                     ownerTag.className = "text-[10px] bg-violet-200 text-violet-800 font-bold px-2 py-0.5 rounded-full";
-                    actionBtn.innerText = "🔨 削り・磨きアクションを行う";
+                    actionBtn.innerText = `🔨 削り・磨きアクションを行う (+${boostPercent}%)`;
                 } else {
                     ownerTag.innerText = `🏠 ${ownerName}さんの工房にお邪魔中`;
                     ownerTag.className = "text-[10px] bg-pink-200 text-pink-800 font-bold px-2 py-0.5 rounded-full";
-                    actionBtn.innerText = `🔨 ${ownerName}さんの宝石をおてつだい磨きする (+3%)`;
+                    actionBtn.innerText = `🔨 ${ownerName}さんの宝石をおてつだい磨きする (+${boostPercent}%)`;
                 }
 
                 listenToLogs();
@@ -560,7 +554,6 @@
             alert("紹介コードをコピーしました！お友達にシェアしよう ✨");
         }
 
-        // ─── コラボ商品の取得・表示 ───
         async function fetchCollaboratorProducts() {
             const { data } = await client.from('products').select('*').order('created_at', { ascending: false });
             renderProducts(data);
@@ -666,7 +659,7 @@
             });
         }
 
-        // ─── 育成・おてつだいアクション ───
+        // ─── 宝石ごとの難易度に応じた育成アクション ───
         async function performAction() {
             const { data: { session } } = await client.auth.getSession();
             currentUser = session ? session.user : null;
@@ -677,11 +670,17 @@
                 return;
             }
 
-            const increment = Math.max(1, Math.floor(6 / currentDifficulty));
-            currentProgress += increment;
+            // 宝石に応じた上昇量（ダイヤなどは1%、標準は4%など）
+            let addPercent = 4;
+            if (currentTitle.includes('ダイヤモンド')) addPercent = 1;
+            else if (currentTitle.includes('アメジスト')) addPercent = 1.5;
+            else if (currentTitle.includes('エメラルド')) addPercent = 2;
+            else if (currentTitle.includes('ルビー')) addPercent = 3;
+
+            currentProgress += addPercent;
             if (currentProgress > 100) currentProgress = 100;
 
-            let actionText = visitingOwnerName ? `がおてつだいハンマーで磨いてくれました！ (+${increment}%)` : "ハンマーで母岩を削りました！";
+            let actionText = visitingOwnerName ? `がおてつだいハンマーで磨いてくれました！ (+${addPercent}%)` : `が丁寧に磨き上げました！ (+${addPercent}%)`;
             if (currentProgress <= 20) { currentStage = 1; }
             else if (currentProgress <= 45) { currentStage = 2; currentMetal = '真鍮 (Brass) - ルース精密整形中'; }
             else if (currentProgress <= 70) { currentStage = 3; currentMetal = '✨ シルバー925 (Sterling Silver) に進化！'; }
@@ -748,13 +747,15 @@
             document.getElementById('current-item-title').innerText = currentTitle;
             document.getElementById('current-item-author').innerText = currentAuthor;
             document.getElementById('progress-bar').style.width = currentProgress + '%';
-            document.getElementById('progress-text').innerText = currentProgress;
+            document.getElementById('progress-text').innerText = Math.round(currentProgress * 10) / 10;
             document.getElementById('metal-rank-display').innerText = currentMetal;
 
             const badge = document.getElementById('project-badge');
             const actionBtn = document.getElementById('action-btn');
             const statusMsg = document.getElementById('status-message');
             const icon = document.getElementById('gem-icon');
+
+            const boostPercent = currentTitle.includes('ダイヤモンド') ? 1 : currentTitle.includes('アメジスト') ? 1.5 : currentTitle.includes('エメラルド') ? 2 : currentTitle.includes('ルビー') ? 3 : 4;
 
             if (currentStage === 1) {
                 badge.innerText = "⛏️ 段階1：荒削り（ハンマー作業）";
@@ -774,6 +775,14 @@
                 actionBtn.innerHTML = "🎉 特価オーダー確定済み";
                 actionBtn.className = "w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl shadow-md cursor-default text-sm";
                 statusMsg.innerText = "おめでとうございます！最高級ジュエリーの製作が完了しました。";
+            }
+
+            if (currentStage < 5) {
+                if (visitingOwnerName && visitingOwnerName !== currentUsername) {
+                    actionBtn.innerText = `🔨 ${visitingOwnerName}さんの宝石をおてつだい磨きする (+${boostPercent}%)`;
+                } else {
+                    actionBtn.innerText = `🔨 削り・磨きアクションを行う (+${boostPercent}%)`;
+                }
             }
         }
 
@@ -802,621 +811,6 @@
             if (tabName === 'friends') {
                 fetchFriendsRooms();
             }
-        }
-    </script>
-</body>
-</html>
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-        .phone-frame {
-            width: 100%;
-            max-width: 420px;
-            height: 100vh;
-            max-height: 844px;
-            background-color: #ffffff;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-        @media (min-width: 421px) {
-            .phone-frame {
-                border-radius: 40px;
-                border: 8px solid #1f2937;
-                height: 844px;
-            }
-        }
-    </style>
-</head>
-<body onload="initApp()">
-
-    <div class="phone-frame">
-        <!-- ヘッダー -->
-        <header class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-4 shadow-md flex justify-between items-center z-10">
-            <div>
-                <h1 class="font-bold text-lg tracking-wider">✨ Polish!</h1>
-                <p class="text-[10px] text-violet-200">職人: <span id="header-status" class="font-bold text-amber-300">要ログイン</span></p>
-            </div>
-            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">共創ジュエリー</span>
-        </header>
-
-        <!-- メインコンテンツ領域 -->
-        <main id="main-content" class="flex-1 overflow-y-auto pb-20">
-            <!-- 【画面1：ホーム（宝石選択 ＆ 進行中プロジェクト ＆ 作家コラボ商品）】 -->
-            <div id="view-home" class="p-4 space-y-4">
-                <div class="bg-violet-50 border border-violet-100 rounded-2xl p-4 text-violet-900 shadow-sm">
-                    <h2 class="font-bold text-sm">💎 育てる宝石を決めましょう！</h2>
-                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">レア度が高い宝石ほど、完成までに多くの鍛錬と仲間との協力が必要です。</p>
-                </div>
-
-                <!-- 宝石選択リスト -->
-                <div class="space-y-3">
-                    <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">✨ 育成する原石を選ぶ（難易度別）</h3>
-                    <div id="project-list-container" class="space-y-2.5">
-                        <div class="bg-white border border-gray-100 rounded-2xl p-3 text-center text-xs text-gray-400">
-                            プロジェクトを読み込み中...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ハンドメイド作家・協力者によるコラボ商品セクション -->
-                <div class="space-y-3 pt-2">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">🎨 協力作家・コラボ商品</h3>
-                        <span class="text-[10px] text-gray-400">リアルタイム出品</span>
-                    </div>
-                    
-                    <div id="collaborator-products-container" class="space-y-3">
-                        <div class="bg-white border border-dashed border-gray-200 rounded-2xl p-4 text-center text-xs text-gray-400">
-                            現在出品されているコラボ商品はありません...
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 【画面2：工房（ログイン中のみアクセス可能）】 -->
-            <div id="view-grow" class="p-4 space-y-4 hidden">
-                <div class="text-center space-y-1 py-1">
-                    <span id="project-badge" class="text-[10px] bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full">⛏️ 段階1：荒削り（ハンマー作業）</span>
-                    <h2 id="current-item-title" class="font-bold text-gray-800 text-base pt-1">原石名</h2>
-                    <p id="current-item-author" class="text-xs text-violet-600 font-medium">監修ブランド</p>
-                </div>
-
-                <!-- ビジュアルエリア -->
-                <div class="bg-gradient-to-b from-stone-900 to-slate-900 rounded-3xl p-5 text-white text-center relative overflow-hidden shadow-inner border border-stone-800">
-                    <div id="gem-icon" class="text-5xl my-2">🪨</div>
-                    
-                    <div class="my-1">
-                        <span class="text-[10px] uppercase tracking-widest text-stone-400">現在の土台金属</span>
-                        <div id="metal-rank-display" class="text-xs font-bold text-amber-400">真鍮 (Brass) - ベーシック</div>
-                    </div>
-
-                    <div class="text-xs text-violet-300 font-semibold mb-1">完成度: <span id="progress-text">5</span>%</div>
-                    
-                    <div class="w-full bg-stone-800 h-2.5 rounded-full overflow-hidden p-0.5 border border-stone-700">
-                        <div id="progress-bar" class="bg-gradient-to-r from-amber-400 to-violet-400 h-full rounded-full transition-all duration-300" style="width: 5%;"></div>
-                    </div>
-
-                    <p id="status-message" class="text-[11px] text-stone-300 mt-2">ログイン中のアカウントで作業を実行しよう！</p>
-                </div>
-
-                <!-- アクションボタン -->
-                <button id="action-btn" onclick="performAction()" class="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white font-bold py-3 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm">
-                    🔨 削り・磨きアクションを行う
-                </button>
-
-                <!-- リアルタイム貢献ログ -->
-                <div class="bg-white border border-gray-100 rounded-2xl p-3 space-y-2 shadow-sm">
-                    <h3 class="font-bold text-xs text-gray-800">📜 職人たちの貢献ライブログ</h3>
-                    <div id="log-container" class="space-y-1 max-h-24 overflow-y-auto text-[11px] text-gray-600 bg-gray-50 p-2 rounded-xl">
-                        <div class="text-gray-400">まだアクション履歴はありません...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 【画面3：マイページ】 -->
-            <div id="view-mypage" class="p-4 space-y-4 hidden">
-                <div id="auth-container" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
-                    <h3 class="font-bold text-gray-800 text-sm">🔐 ログインが必要です</h3>
-                    <p class="text-[11px] text-gray-500">アプリを利用するにはメールアドレスでログインしてください。</p>
-                    
-                    <div id="signup-notice" class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-800 space-y-1 hidden">
-                        <p class="font-bold">✉️ 確認メールを送信しました！</p>
-                        <p class="text-[11px] text-amber-700 leading-relaxed">メール内のリンクを開いて認証を完了させてからログインしてください。</p>
-                    </div>
-
-                    <div class="space-y-2 pt-1">
-                        <input type="email" id="auth-email" placeholder="メールアドレス" class="w-full bg-gray-50 border border-gray-200 text-xs px-3 py-2.5 rounded-xl text-gray-700 outline-none focus:border-violet-500">
-                        <input type="password" id="auth-password" placeholder="パスワード (6文字以上)" class="w-full bg-gray-50 border border-gray-200 text-xs px-3 py-2.5 rounded-xl text-gray-700 outline-none focus:border-violet-500">
-                        
-                        <div class="flex gap-2 pt-1">
-                            <button onclick="handleSignUp()" class="flex-1 bg-violet-600 text-white text-xs font-bold py-2.5 rounded-xl hover:bg-violet-700 transition">新規登録</button>
-                            <button onclick="handleSignIn()" class="flex-1 bg-indigo-600 text-white text-xs font-bold py-2.5 rounded-xl hover:bg-indigo-700 transition">ログイン</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="user-info-container" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm hidden">
-                    <div class="flex items-center justify-between border-b border-gray-50 pb-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center text-xl text-violet-700 font-bold">
-                                💎
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-gray-800 text-xs text-gray-400">ログイン中</h3>
-                                <p class="text-xs text-violet-700 font-bold truncate max-w-[180px]" id="display-useremail">-</p>
-                            </div>
-                        </div>
-                        <button onclick="handleSignOut()" class="bg-gray-100 text-gray-600 text-[11px] font-bold px-3 py-1.5 rounded-xl hover:bg-gray-200 transition">ログアウト</button>
-                    </div>
-
-                    <div class="space-y-1.5 pt-1">
-                        <label class="block text-xs font-bold text-gray-700">👤 あなたの職人名（表示名）</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="username-input" placeholder="例: 琥珀ハンター" class="flex-1 bg-gray-50 border border-gray-200 text-xs px-3 py-2 rounded-xl text-gray-700 outline-none focus:border-violet-500">
-                            <button onclick="updateUsername()" class="bg-violet-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-violet-700 transition">変更を保存</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="purchase-history-section" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm hidden">
-                    <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5">
-                        <span>🛍️</span> 購入・オーダー履歴
-                    </h3>
-                    <div id="purchase-history-container" class="space-y-2 text-xs text-gray-600">
-                        <div class="text-gray-400 text-center py-2">購入履歴はまだありません。</div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- ボトムナビゲーション -->
-        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3 z-20 shadow-lg">
-            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-gray-400 transition">
-                <span class="text-lg">🏠</span>
-                <span class="text-[10px] font-bold mt-1">ホーム</span>
-            </button>
-            <button onclick="switchTab('grow')" id="nav-grow" class="flex flex-col items-center text-gray-400 transition">
-                <span class="text-lg">💎</span>
-                <span class="text-[10px] font-bold mt-1">工房・育成</span>
-            </button>
-            <button onclick="switchTab('mypage')" id="nav-mypage" class="flex flex-col items-center text-violet-600 transition">
-                <span class="text-lg">👤</span>
-                <span class="text-[10px] font-bold mt-1">マイページ</span>
-            </button>
-        </nav>
-    </div>
-
-    <script>
-        // ─── Supabase 設定 ───
-        const SUPABASE_URL = 'https://btpuoqumetkkkicobacp.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cHVvcXVtZXRra2tpY29iYWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzQ5OTAsImV4cCI6MjEwNzU1MDk5MH0.x7dtxP-d1McO3Tj3WpJLA-AckQVNoLe1lZz4lOTgWn0'; // ←あなたのLegacy anonキーを入れてください
-        
-        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let currentProjectId = null;
-        let currentUser = null;
-        let currentUsername = '職人';
-
-        let currentProgress = 5;
-        let currentStage = 1;
-        let currentMetal = '真鍮 (Brass) - ベーシック';
-        let currentTitle = '原石';
-        let currentAuthor = '';
-        let currentDifficulty = 1; // 育成の難易度（タップごとの進捗率に影響）
-
-        async function initApp() {
-            const { data: { session } } = await client.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                await fetchUserProfile();
-                updateAuthUI();
-                switchTab('home');
-            } else {
-                currentUser = null;
-                updateAuthUI();
-                switchTab('mypage');
-            }
-
-            client.auth.onAuthStateChange(async (event, session) => {
-                currentUser = session ? session.user : null;
-                if (currentUser) {
-                    await fetchUserProfile();
-                }
-                updateAuthUI();
-                if (!currentUser) {
-                    switchTab('mypage');
-                }
-            });
-
-            await fetchProjectsList();
-            await fetchCollaboratorProducts();
-        }
-
-        async function fetchUserProfile() {
-            if (!currentUser) return;
-            const { data } = await client
-                .from('profiles')
-                .select('username')
-                .eq('id', currentUser.id)
-                .single();
-
-            if (data && data.username) {
-                currentUsername = data.username;
-            } else {
-                currentUsername = currentUser.email.split('@')[0];
-            }
-            document.getElementById('username-input').value = currentUsername;
-            document.getElementById('header-status').innerText = currentUsername;
-        }
-
-        async function updateUsername() {
-            if (!currentUser) return;
-            const newName = document.getElementById('username-input').value.trim();
-            if (!newName) {
-                alert("名前を入力してください。");
-                return;
-            }
-
-            const { error } = await client
-                .from('profiles')
-                .upsert({ id: currentUser.id, username: newName });
-
-            if (error) {
-                alert("名前の更新エラー: " + error.message);
-            } else {
-                currentUsername = newName;
-                document.getElementById('header-status').innerText = currentUsername;
-                alert("職人名（表示名）を変更しました！✨");
-            }
-        }
-
-        async function handleSignUp() {
-            const email = document.getElementById('auth-email').value.trim();
-            const password = document.getElementById('auth-password').value.trim();
-
-            if (!email || !password) {
-                alert("メールアドレスとパスワードを入力してください。");
-                return;
-            }
-
-            const { data, error } = await client.auth.signUp({ email, password });
-            if (error) {
-                alert("登録エラー: " + error.message);
-            } else {
-                document.getElementById('signup-notice').classList.remove('hidden');
-                alert("確認メールを送信しました！メール内のリンクを開いて認証を完了させてください。✨");
-            }
-        }
-
-        async function handleSignIn() {
-            const email = document.getElementById('auth-email').value.trim();
-            const password = document.getElementById('auth-password').value.trim();
-
-            if (!email || !password) {
-                alert("メールアドレスとパスワードを入力してください。");
-                return;
-            }
-
-            const { data, error } = await client.auth.signInWithPassword({ email, password });
-            if (error) {
-                alert("ログインエラー: " + error.message);
-            } else {
-                alert("ログインしました！✨");
-                switchTab('home');
-            }
-        }
-
-        async function handleSignOut() {
-            await client.auth.signOut();
-            alert("ログアウトしました。");
-            switchTab('mypage');
-        }
-
-        function updateAuthUI() {
-            const authContainer = document.getElementById('auth-container');
-            const userInfoContainer = document.getElementById('user-info-container');
-            const purchaseHistorySection = document.getElementById('purchase-history-section');
-            const headerStatus = document.getElementById('header-status');
-            const displayEmail = document.getElementById('display-useremail');
-
-            if (currentUser) {
-                authContainer.classList.add('hidden');
-                userInfoContainer.classList.remove('hidden');
-                purchaseHistorySection.classList.remove('hidden');
-                headerStatus.innerText = currentUsername;
-                headerStatus.className = "font-bold text-amber-300";
-                displayEmail.innerText = currentUser.email;
-                fetchPurchaseHistory();
-            } else {
-                authContainer.classList.remove('hidden');
-                userInfoContainer.classList.add('hidden');
-                purchaseHistorySection.classList.add('hidden');
-                headerStatus.innerText = "要ログイン";
-                headerStatus.className = "font-bold text-rose-300";
-                displayEmail.innerText = "-";
-            }
-        }
-
-        // ─── 宝石プロジェクト一覧の取得・選択 ───
-        async function fetchProjectsList() {
-            const { data } = await client.from('projects').select('*').order('created_at', { ascending: true });
-            renderProjectsList(data);
-
-            client
-              .channel('public:projects')
-              .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, async () => {
-                  const { data: updatedData } = await client.from('projects').select('*').order('created_at', { ascending: true });
-                  renderProjectsList(updatedData);
-              })
-              .subscribe();
-        }
-
-        function renderProjectsList(projects) {
-            const container = document.getElementById('project-list-container');
-            if (!projects || projects.length === 0) {
-                container.innerHTML = `<div class="bg-white p-4 text-center text-xs text-gray-400 rounded-2xl">育成可能な原石がありません。</div>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            projects.forEach(proj => {
-                const isSelected = (currentProjectId === proj.id);
-                // 難易度判定（価格やタイトルから推測、またはdifficultyカラムがあればそれを利用）
-                let diffBadge = '⭐ 難易度: 標準';
-                let diffColor = 'bg-blue-50 text-blue-600';
-                if (proj.title.includes('ルビー')) { diffBadge = '⭐⭐ 難易度: やや困難'; diffColor = 'bg-amber-50 text-amber-600'; }
-                else if (proj.title.includes('エメラルド')) { diffBadge = '⭐⭐⭐ 難易度: 困難'; diffColor = 'bg-emerald-50 text-emerald-600'; }
-                else if (proj.title.includes('アメジスト')) { diffBadge = '⭐⭐⭐⭐ 難易度: 超困難'; diffColor = 'bg-purple-50 text-purple-600'; }
-                else if (proj.title.includes('ダイヤモンド')) { diffBadge = '⭐⭐⭐⭐⭐ 難易度: 至難の業'; diffColor = 'bg-rose-50 text-rose-600'; }
-
-                const div = document.createElement('div');
-                div.className = `bg-white border ${isSelected ? 'border-violet-500 ring-2 ring-violet-100' : 'border-gray-100'} rounded-2xl p-4 flex justify-between items-center shadow-sm`;
-                div.innerHTML = `
-                    <div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] text-violet-600 font-bold bg-violet-50 px-2 py-0.5 rounded-md">${proj.author}</span>
-                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-md ${diffColor}">${diffBadge}</span>
-                        </div>
-                        <h4 class="font-bold text-gray-800 text-sm mt-1">${proj.title}</h4>
-                        <p class="text-[11px] text-gray-400 mt-0.5">完成度: ${proj.progress}% / ${proj.metal_name}</p>
-                    </div>
-                    <button onclick="selectProject('${proj.id}')" class="${isSelected ? 'bg-emerald-600' : 'bg-gradient-to-r from-violet-600 to-indigo-600'} text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
-                        ${isSelected ? '育成中 ✨' : 'この原石を育てる'}
-                    </button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        async function selectProject(projectId) {
-            if (!currentUser) {
-                alert("工房に入るにはログインが必要です！");
-                switchTab('mypage');
-                return;
-            }
-
-            const { data } = await client.from('projects').select('*').eq('id', projectId).single();
-            if (data) {
-                currentProjectId = data.id;
-                currentProgress = data.progress;
-                currentStage = data.stage;
-                currentMetal = data.metal_name;
-                currentTitle = data.title;
-                currentAuthor = data.author;
-
-                // 難易度係数の決定（難しい宝石ほど1回あたりの進捗が小さくなる）
-                if (currentTitle.includes('ダイヤモンド')) currentDifficulty = 5;
-                else if (currentTitle.includes('アメジスト')) currentDifficulty = 4;
-                else if (currentTitle.includes('エメラルド')) currentDifficulty = 3;
-                else if (currentTitle.includes('ルビー')) currentDifficulty = 2;
-                else currentDifficulty = 1;
-
-                updateUI();
-                fetchProjectsList();
-                switchTab('grow');
-            }
-        }
-
-        // ─── コラボ商品の取得・表示 ───
-        async function fetchCollaboratorProducts() {
-            const { data } = await client.from('products').select('*').order('created_at', { ascending: false });
-            renderProducts(data);
-
-            client
-              .channel('public:products')
-              .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, async () => {
-                  const { data: updatedData } = await client.from('products').select('*').order('created_at', { ascending: false });
-                  renderProducts(updatedData);
-              })
-              .subscribe();
-        }
-
-        function renderProducts(products) {
-            const container = document.getElementById('collaborator-products-container');
-            if (!products || products.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white border border-dashed border-gray-200 rounded-2xl p-4 text-center text-xs text-gray-400">
-                        現在出品されているコラボ商品はありません...
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            products.forEach(prod => {
-                const div = document.createElement('div');
-                div.className = "bg-white border border-gray-100 rounded-2xl p-4 space-y-2 shadow-sm";
-                div.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-[10px] bg-violet-50 text-violet-600 font-bold px-2 py-0.5 rounded-md">作家: ${prod.author_name}</span>
-                            <h4 class="font-bold text-gray-800 text-sm mt-1">${prod.title}</h4>
-                            <p class="text-[11px] text-gray-500">${prod.description}</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-violet-600 font-bold text-sm">¥${prod.price.toLocaleString()}</div>
-                        </div>
-                    </div>
-                    <button onclick="buyProduct('${prod.id}', '${prod.title}', ${prod.price})" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold py-2 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
-                        このコラボ商品を購入する
-                    </button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        async function buyProduct(productId, productTitle, price) {
-            if (!currentUser) {
-                alert("購入にはログインが必要です！");
-                switchTab('mypage');
-                return;
-            }
-
-            if (!confirm(`「${productTitle}」（¥${price.toLocaleString()}）を購入しますか？`)) return;
-
-            const { error } = await client
-                .from('purchases')
-                .insert([{
-                    user_id: currentUser.id,
-                    product_id: productId,
-                    product_title: productTitle,
-                    price: price
-                }]);
-
-            if (error) {
-                alert("購入エラー: " + error.message);
-            } else {
-                alert("ご購入ありがとうございます！✨ マイページの購入履歴に追加されました。");
-                fetchPurchaseHistory();
-            }
-        }
-
-        async function fetchPurchaseHistory() {
-            if (!currentUser) return;
-            const { data } = await client
-                .from('purchases')
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .order('created_at', { ascending: false });
-
-            const container = document.getElementById('purchase-history-container');
-            if (!data || data.length === 0) {
-                container.innerHTML = `<div class="text-gray-400 text-center py-2">購入履歴はまだありません。</div>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            data.forEach(item => {
-                const dateStr = new Date(item.created_at).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-                const div = document.createElement('div');
-                div.className = "bg-gray-50 p-2.5 rounded-xl flex justify-between items-center";
-                div.innerHTML = `
-                    <div>
-                        <div class="font-bold text-gray-800">${item.product_title}</div>
-                        <div class="text-[10px] text-gray-400">${dateStr} 注文</div>
-                    </div>
-                    <div class="font-bold text-violet-600">¥${item.price.toLocaleString()}</div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        // ─── 育成アクション（難易度に応じて進捗率が変動） ───
-        async function performAction() {
-            if (!currentProjectId || !currentUser) {
-                alert("ログインしてください！あるいは育てる宝石を選んでください。");
-                switchTab('home');
-                return;
-            }
-
-            // 難易度が高いほど、1回あたりの進捗が小さくなる（最高級品ほど育てるのが困難！）
-            const increment = Math.max(1, Math.floor(6 / currentDifficulty));
-            currentProgress += increment;
-            if (currentProgress > 100) currentProgress = 100;
-
-            let actionText = "ハンマーで丁寧に荒削りしました！";
-            if (currentProgress <= 20) { currentStage = 1; actionText = "ハンマーで頑固な母岩を削りました！"; }
-            else if (currentProgress <= 45) { currentStage = 2; currentMetal = '真鍮 (Brass) - ルース精密整形中'; actionText = "極細やすりでミリ単位の形状出しを行いました！"; }
-            else if (currentProgress <= 70) { currentStage = 3; currentMetal = '✨ シルバー925 (Sterling Silver) に進化！'; actionText = "ダイヤモンドペーストで下地ポリッシュを行いました（シルバー進化）！"; }
-            else if (currentProgress < 100) { currentStage = 4; currentMetal = '👑 最高級 K18ゴールド仕様 に進化！'; actionText = "職人技の鏡面仕上げを施しました（K18進化）！"; }
-            else { currentStage = 5; currentMetal = '🌟 プレミアムジュエリー究極完成'; actionText = "すべての工程を完璧にやり遂げました！"; }
-
-            await client
-                .from('projects')
-                .update({ 
-                    progress: currentProgress, 
-                    stage: currentStage, 
-                    metal_name: currentMetal,
-                    updated_at: new Date()
-                })
-                .eq('id', currentProjectId);
-
-            await client
-                .from('contributions')
-                .insert([{
-                    project_id: currentProjectId,
-                    user_id: currentUser.id,
-                    username: currentUsername,
-                    action_type: actionText
-                }]);
-
-            updateUI();
-            fetchProjectsList();
-        }
-
-        function updateUI() {
-            document.getElementById('current-item-title').innerText = currentTitle;
-            document.getElementById('current-item-author').innerText = currentAuthor;
-            document.getElementById('progress-bar').style.width = currentProgress + '%';
-            document.getElementById('progress-text').innerText = currentProgress;
-            document.getElementById('metal-rank-display').innerText = currentMetal;
-
-            const badge = document.getElementById('project-badge');
-            const actionBtn = document.getElementById('action-btn');
-            const statusMsg = document.getElementById('status-message');
-            const icon = document.getElementById('gem-icon');
-
-            if (currentStage === 1) {
-                badge.innerText = "⛏️ 段階1：荒削り（ハンマー作業）";
-                icon.innerText = currentTitle.includes('ルビー') ? '🔥' : currentTitle.includes('エメラルド') ? '🌿' : currentTitle.includes('ダイヤモンド') ? '💠' : '🪨';
-            } else if (currentStage === 2) {
-                badge.innerText = "📐 段階2：精密面取り・形状出し";
-                icon.innerText = "⛏️";
-            } else if (currentStage === 3) {
-                badge.innerText = "✨ 段階3：下地ポリッシュ（金属進化！）";
-                icon.innerText = "💎";
-            } else if (currentStage === 4) {
-                badge.innerText = "👑 段階4：鏡面仕上げ（最高級K18へ！）";
-                icon.innerText = "💍";
-            } else {
-                badge.innerText = "🎉 制作＆金属進化 完了！";
-                icon.innerText = "✨💎✨";
-                actionBtn.innerHTML = "🎉 特価オーダー確定済み";
-                actionBtn.className = "w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl shadow-md cursor-default text-sm";
-                statusMsg.innerText = "おめでとうございます！最高級ジュエリーの製作が完了しました。";
-            }
-        }
-
-        function switchTab(tabName) {
-            if (!currentUser && tabName !== 'mypage') {
-                alert("ログインが必要です。");
-                tabName = 'mypage';
-            }
-
-            document.getElementById('view-home').classList.add('hidden');
-            document.getElementById('view-grow').classList.add('hidden');
-            document.getElementById('view-mypage').classList.add('hidden');
-
-            document.getElementById('nav-home').className = "flex flex-col items-center text-gray-400 transition";
-            document.getElementById('nav-grow').className = "flex flex-col items-center text-gray-400 transition";
-            document.getElementById('nav-mypage').className = "flex flex-col items-center text-gray-400 transition";
-
-            document.getElementById('view-' + tabName).classList.remove('hidden');
-            document.getElementById('nav-' + tabName).className = "flex flex-col items-center text-violet-600 transition";
         }
     </script>
 </body>
