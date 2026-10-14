@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GemStory（ジェムストーリー）- みんなで創る共創アクセサリー</title>
+    <title>Polish! - 原石から仕立てる共創ジュエリー</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* スマホ風コンテナのスタイル */
         body {
             background-color: #f3f4f6;
             display: flex;
@@ -44,42 +43,42 @@
         <!-- ヘッダー -->
         <header class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-4 shadow-md flex justify-between items-center z-10">
             <div>
-                <h1 class="font-bold text-lg tracking-wider">✨ GemStory</h1>
-                <p class="text-[10px] text-violet-200">作家のこだわりを、みんなで磨き上げる</p>
+                <h1 class="font-bold text-lg tracking-wider">✨ Polish!</h1>
+                <p class="text-[10px] text-violet-200">原石を削り、磨き、至高のジュエリーへ</p>
             </div>
-            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">共創EC</span>
+            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">共創クラフト</span>
         </header>
 
         <!-- メインコンテンツ領域 -->
         <main id="main-content" class="flex-1 overflow-y-auto pb-20">
-            <!-- 【画面1：ホーム（商品一覧）】 -->
+            <!-- 【画面1：ホーム（プロジェクト一覧）】 -->
             <div id="view-home" class="p-4 space-y-4">
                 <div class="bg-violet-50 border border-violet-100 rounded-2xl p-4 text-violet-900 shadow-sm">
-                    <h2 class="font-bold text-sm">💎 「買う」から「共創する」へ</h2>
-                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">仲間と一緒に原石を磨き、限定デザインを完成させよう。共同購入で特別価格に。</p>
+                    <h2 class="font-bold text-sm">💎 原石から仕立てる共創体験</h2>
+                    <p class="text-xs mt-1 text-violet-700 leading-relaxed">原石を削り出してルースにし、仲間と磨き上げることで、最高級の金属へと進化させよう。</p>
                 </div>
 
-                <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">注目の共創プロジェクト</h3>
+                <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">発掘可能な原石プロジェクト</h3>
 
                 <!-- 商品カード1 -->
                 <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
                     <div class="bg-stone-900 h-44 flex items-center justify-center text-4xl relative">
-                        💍
-                        <span class="absolute top-3 left-3 text-[10px] bg-amber-400 text-stone-900 font-bold px-2 py-0.5 rounded-full">残り2人で成立</span>
+                        🪨
+                        <span class="absolute top-3 left-3 text-[10px] bg-amber-400 text-stone-900 font-bold px-2 py-0.5 rounded-full">未開拓の原石</span>
                     </div>
                     <div class="p-4 space-y-3">
                         <div>
-                            <span class="text-[10px] text-violet-600 font-bold bg-violet-50 px-2 py-0.5 rounded-md">Atelier Lumière 作</span>
-                            <h4 class="font-bold text-gray-800 text-sm mt-1">月夜の雫 琥珀ガラスリング</h4>
-                            <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-2">「深海の青と夕暮れの琥珀を閉じ込めました。みんなでクロスで磨き上げて輝きを最高潮に！」</p>
+                            <span class="text-[10px] text-violet-600 font-bold bg-violet-50 px-2 py-0.5 rounded-md">Atelier Lumière 監修</span>
+                            <h4 class="font-bold text-gray-800 text-sm mt-1">月夜の雫 琥珀原石</h4>
+                            <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-2">「荒削りな鉱石からルースを切り出し、みんなの磨き上げでK18ゴールド仕様へ進化させよう！」</p>
                         </div>
                         <div class="flex justify-between items-end pt-2 border-t border-gray-50">
                             <div>
-                                <span class="text-xs text-gray-400 line-through">通常 ¥4,800</span>
-                                <div class="text-violet-600 font-bold text-base">共同価格 ¥2,400</div>
+                                <span class="text-xs text-gray-400 line-through">通常 ¥9,800</span>
+                                <div class="text-violet-600 font-bold text-base">共同特価 ¥4,900</div>
                             </div>
-                            <button onclick="startGroup('月夜の雫 琥珀ガラスリング', 'Atelier Lumière', 4800, 2400)" class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
-                                プロジェクトに参加
+                            <button onclick="startProject('月夜の雫 琥珀原石', 'Atelier Lumière', 9800, 4900)" class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
+                                発掘・削りを始める
                             </button>
                         </div>
                     </div>
@@ -88,61 +87,68 @@
                 <!-- 商品カード2 -->
                 <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
                     <div class="bg-stone-900 h-44 flex items-center justify-center text-4xl relative">
-                        💎
-                        <span class="absolute top-3 left-3 text-[10px] bg-amber-400 text-stone-900 font-bold px-2 py-0.5 rounded-full">残り1人で成立</span>
+                        🪨
+                        <span class="absolute top-3 left-3 text-[10px] bg-amber-400 text-stone-900 font-bold px-2 py-0.5 rounded-full">未開拓の原石</span>
                     </div>
                     <div class="p-4 space-y-3">
                         <div>
-                            <span class="text-[10px] text-violet-600 font-bold bg-violet-50 px-2 py-0.5 rounded-md">SilverCraft Miki 作</span>
-                            <h4 class="font-bold text-gray-800 text-sm mt-1">星屑のシルバーネックレス</h4>
-                            <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-2">「職人が一つずつ削り出した純銀ベース。みんなで仕上げのポリッシュを行って特別仕様に。」</p>
+                            <span class="text-[10px] text-violet-600 font-bold bg-violet-50 px-2 py-0.5 rounded-md">SilverCraft Miki 監修</span>
+                            <h4 class="font-bold text-gray-800 text-sm mt-1">星屑のフローライト原石</h4>
+                            <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-2">「神秘的な青緑の原石。丁寧なポリッシュを重ねて最高峰のプラチナ枠を手に入れよう。」</p>
                         </div>
                         <div class="flex justify-between items-end pt-2 border-t border-gray-50">
                             <div>
-                                <span class="text-xs text-gray-400 line-through">通常 ¥6,200</span>
-                                <div class="text-violet-600 font-bold text-base">共同価格 ¥3,100</div>
+                                <span class="text-xs text-gray-400 line-through">通常 ¥12,000</span>
+                                <div class="text-violet-600 font-bold text-base">共同特価 ¥6,000</div>
                             </div>
-                            <button onclick="startGroup('星屑のシルバーネックレス', 'SilverCraft Miki', 6200, 3100)" class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
-                                プロジェクトに参加
+                            <button onclick="startProject('星屑のフローライト原石', 'SilverCraft Miki', 12000, 6000)" class="bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
+                                発掘・削りを始める
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 【画面2：育成・共創（磨く機能）】 -->
+            <!-- 【画面2：育成・共創（削る・磨く・金属進化フェーズ）】 -->
             <div id="view-grow" class="p-4 space-y-4 hidden">
                 <div class="text-center space-y-1 py-1">
-                    <span class="text-[10px] bg-violet-100 text-violet-700 font-bold px-3 py-1 rounded-full">✨ 共同磨き上げプロジェクト進行中</span>
-                    <h2 id="current-item-title" class="font-bold text-gray-800 text-base pt-1">月夜の雫 琥珀ガラスリング</h2>
+                    <span id="project-badge" class="text-[10px] bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full">⛏️ ステップ1：原石を削ってルース化中</span>
+                    <h2 id="current-item-title" class="font-bold text-gray-800 text-base pt-1">月夜の雫 琥珀原石</h2>
                     <p id="current-author" class="text-xs text-violet-600 font-medium">Atelier Lumière</p>
                 </div>
 
-                <!-- 育成・磨きビジュアルエリア -->
+                <!-- ビジュアルエリア -->
                 <div class="bg-gradient-to-b from-stone-900 to-slate-900 rounded-3xl p-6 text-white text-center relative overflow-hidden shadow-inner border border-stone-800">
-                    <div id="gem-icon" class="text-6xl my-4 transition-transform duration-300 transform scale-100">
-                        ✨💍✨
+                    <div id="gem-icon" class="text-6xl my-3 transition-transform duration-300 transform scale-100">
+                        🪨
                     </div>
-                    <div class="text-xs text-amber-300 font-semibold mb-2">輝き度合 (ポリッシュ): <span id="progress-text">40</span>%</div>
+                    
+                    <!-- 金属ランク表示 -->
+                    <div class="my-2">
+                        <span class="text-[10px] uppercase tracking-widest text-stone-400">現在の土台金属</span>
+                        <div id="metal-rank-display" class="text-sm font-bold text-amber-400">真鍮 (Brass) - ベーシック</div>
+                    </div>
+
+                    <div class="text-xs text-violet-300 font-semibold mb-1">輝き度 (進捗): <span id="progress-text">20</span>%</div>
                     
                     <!-- プログレスバー -->
                     <div class="w-full bg-stone-800 h-3 rounded-full overflow-hidden p-0.5 border border-stone-700">
-                        <div id="progress-bar" class="bg-gradient-to-r from-amber-400 to-violet-400 h-full rounded-full transition-all duration-300" style="width: 40%;"></div>
+                        <div id="progress-bar" class="bg-gradient-to-r from-amber-400 to-violet-400 h-full rounded-full transition-all duration-300" style="width: 20%;"></div>
                     </div>
 
-                    <p id="status-message" class="text-[11px] text-stone-300 mt-3 leading-relaxed">あと2人の参加、または「クロスで磨く」で輝きがアップ！100%で作家への正式オーダーが確定します。</p>
+                    <p id="status-message" class="text-[11px] text-stone-300 mt-3 leading-relaxed">ハンマーで削ってルースの形を整えよう！磨きが進むと金属が「シルバー925」「K18ゴールド」へ進化します。</p>
                 </div>
 
-                <!-- 磨くアクションボタン -->
-                <button onclick="polishGem()" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm">
-                    🧽 ジュエリークロスで磨く (+15%)
+                <!-- アクションボタン -->
+                <button id="action-btn" onclick="performAction()" class="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white font-bold py-3.5 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm">
+                    🔨 ハンマーで削って形にする (+20%)
                 </button>
 
                 <!-- 友達へのシェアセクション -->
                 <div class="bg-violet-50/60 border border-violet-100 rounded-2xl p-4 space-y-3">
-                    <h3 class="font-bold text-xs text-violet-900">💬 仲間を招待して一緒に磨き上げよう！</h3>
+                    <h3 class="font-bold text-xs text-violet-900">💬 仲間を招待して金属ランクを上げよう！</h3>
                     <div class="flex gap-2">
-                        <input type="text" readonly value="https://gemstory.app/invite?project=xyz999" class="bg-white border border-violet-200 text-xs px-3 py-2 rounded-xl flex-1 text-gray-600 outline-none">
+                        <input type="text" readonly value="https://polish.app/invite?project=xyz999" class="bg-white border border-violet-200 text-xs px-3 py-2 rounded-xl flex-1 text-gray-600 outline-none">
                         <button onclick="copyLink()" class="bg-violet-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-violet-700 transition">URLコピー</button>
                     </div>
                 </div>
@@ -155,22 +161,22 @@
                         💎
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-800 text-sm">ゲストユーザー</h3>
-                        <p class="text-xs text-gray-400">参加プロジェクト: 1件</p>
+                        <h3 class="font-bold text-gray-800 text-sm">ゲスト職人</h3>
+                        <p class="text-xs text-gray-400">職人レベル: 見習いクラフター</p>
                     </div>
                 </div>
 
                 <div class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
-                    <h3 class="font-bold text-gray-800 text-xs">参加中の共創プロジェクト</h3>
+                    <h3 class="font-bold text-gray-800 text-xs">挑戦中のジュエリー制作</h3>
                     <div class="border-l-4 border-violet-600 pl-3 py-1">
-                        <div class="font-bold text-xs text-gray-800">月夜の雫 琥珀ガラスリング</div>
-                        <div class="text-[11px] text-gray-500">作家：Atelier Lumière / 輝き度 40%</div>
+                        <div class="font-bold text-xs text-gray-800" id="mypage-item-title">月夜の雫 琥珀原石</div>
+                        <div class="text-[11px] text-gray-500" id="mypage-item-status">進捗 20% / 真鍮ベース</div>
                     </div>
                 </div>
 
                 <div class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
-                    <h3 class="font-bold text-gray-800 text-xs">成立したオーダー・作家への通知</h3>
-                    <p class="text-xs text-gray-400">現在成立しているオーダーはありません。</p>
+                    <h3 class="font-bold text-gray-800 text-xs">工房へのオーダー状況</h3>
+                    <p class="text-xs text-gray-400">100%達成して最高級金属に進化させよう！</p>
                 </div>
             </div>
         </main>
@@ -182,8 +188,8 @@
                 <span class="text-[10px] font-bold mt-1">ホーム</span>
             </button>
             <button onclick="switchTab('grow')" id="nav-grow" class="flex flex-col items-center text-gray-400 transition">
-                <span class="text-lg">🧽</span>
-                <span class="text-[10px] font-bold mt-1">磨く・共創</span>
+                <span class="text-lg">💎</span>
+                <span class="text-[10px] font-bold mt-1">工房・育成</span>
             </button>
             <button onclick="switchTab('mypage')" id="nav-mypage" class="flex flex-col items-center text-gray-400 transition">
                 <span class="text-lg">👤</span>
@@ -193,7 +199,8 @@
     </div>
 
     <script>
-        let progress = 40;
+        let progress = 20;
+        let stage = 1; // 1: 削り中, 2: 磨き中（シルバー）, 3: 仕上げ（K18）
 
         function switchTab(tabName) {
             document.getElementById('view-home').classList.add('hidden');
@@ -208,31 +215,80 @@
             document.getElementById('nav-' + tabName).className = "flex flex-col items-center text-violet-600 transition";
         }
 
-        function startGroup(title, author, normalPrice, groupPrice) {
+        function startProject(title, author, normalPrice, groupPrice) {
             document.getElementById('current-item-title').innerText = title;
             document.getElementById('current-author').innerText = author;
+            document.getElementById('mypage-item-title').innerText = title;
+            progress = 20;
+            stage = 1;
+            updateUI();
             switchTab('grow');
         }
 
-        function polishGem() {
-            progress += 15;
+        function performAction() {
+            progress += 25;
             if (progress > 100) progress = 100;
 
-            document.getElementById('progress-bar').style.width = progress + '%';
-            document.getElementById('progress-text').innerText = progress;
+            // 進捗に応じてステージと金属が進化！
+            if (progress >= 40 && progress < 80) {
+                stage = 2;
+            } else if (progress >= 80) {
+                stage = 3;
+            }
+
+            updateUI();
 
             const icon = document.getElementById('gem-icon');
             icon.classList.add('scale-125');
             setTimeout(() => icon.classList.remove('scale-125'), 200);
+        }
+
+        function updateUI() {
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').innerText = progress;
+
+            const badge = document.getElementById('project-badge');
+            const metalDisplay = document.getElementById('metal-rank-display');
+            const actionBtn = document.getElementById('action-btn');
+            const statusMsg = document.getElementById('status-message');
+            const icon = document.getElementById('gem-icon');
+
+            if (stage === 1) {
+                badge.innerText = "⛏️ ステップ1：原石を削ってルース化中";
+                metalDisplay.innerText = "真鍮 (Brass) - ベーシック土台";
+                icon.innerText = "🪨";
+                actionBtn.innerHTML = "🔨 ハンマーで削って形にする (+25%)";
+                statusMsg.innerText = "原石を削って綺麗なルースの形に整えよう！進むと金属がシルバーに進化します。";
+            } else if (stage === 2) {
+                badge.innerText = "✨ ステップ2：クロスで磨き上げ中";
+                metalDisplay.innerText = "✨ シルバー925 (Sterling Silver) に進化！";
+                icon.innerText = "💎";
+                actionBtn.innerHTML = "🧽 ジュエリークロスで磨く (+25%)";
+                actionBtn.className = "w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm";
+                statusMsg.innerText = "ルースが輝き出し、土台が『シルバー925』にグレードアップしました！さらに磨き上げよう。";
+            } else if (stage < 100) {
+                badge.innerText = "👑 ステップ3：最高峰の仕上げ";
+                metalDisplay.innerText = "👑 最高級 K18ゴールド仕様 に進化！";
+                icon.innerText = "💍";
+                actionBtn.innerHTML = "✨ 最終仕上げを行う (+25%)";
+                statusMsg.innerText = "仲間との協力で『K18ゴールド』への進化権利を獲得！100%で職人への正式オーダーが完了します。";
+            }
 
             if (progress === 100) {
-                document.getElementById('status-message').innerText = "🎉 輝き度が100%になりました！共創プロジェクト成立です！作家へ制作依頼が通知されました。";
-                document.getElementById('status-message').className = "text-[11px] text-amber-300 font-bold mt-3 leading-relaxed";
+                badge.innerText = "🎉 制作＆金属進化 完了！";
+                metalDisplay.innerText = "🌟 プレミアムK18ジュエリー確定";
+                icon.innerText = "✨💍✨";
+                actionBtn.innerHTML = "🎉 特価オーダーを確定する";
+                actionBtn.className = "w-full bg-emerald-600 text-white font-bold py-3.5 rounded-2xl shadow-md cursor-default text-sm";
+                statusMsg.innerText = "おめでとうございます！最高級K18ゴールド仕様のアクセサリーとして職人が製作・発送します。";
+                document.getElementById('mypage-item-status').innerText = "達成完了！ (K18ゴールド仕様)";
+            } else {
+                document.getElementById('mypage-item-status').innerText = `進捗 ${progress}% / ステージ${stage}`;
             }
         }
 
         function copyLink() {
-            alert("共創プロジェクトの招待リンクをコピーしました！友達にシェアして一緒に磨いてもらおう！");
+            alert("共創プロジェクトの招待リンクをコピーしました！友達を呼んで金属ランクをK18に進化させよう！");
         }
     </script>
 </body>
