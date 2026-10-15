@@ -49,7 +49,6 @@
                 <p class="text-[10px] text-pink-100">職人: <span id="header-status" class="font-bold text-yellow-200">確認中...</span></p>
             </div>
             <div class="flex items-center gap-2">
-                <span class="text-xs bg-white/25 px-2.5 py-1 rounded-full font-medium">共創ジュエリー</span>
                 <!-- 通知ベルボタン -->
                 <button onclick="toggleNotificationModal()" class="relative bg-white/20 hover:bg-white/30 p-2 rounded-full transition text-sm">
                     🔔
@@ -306,7 +305,6 @@
         }
 
         async function fetchGlobalNotifications() {
-            // 直近の貢献ログやお知らせを全体の通知として取得
             const { data } = await client.from('contributions').select('*').order('created_at', { ascending: false }).limit(10);
             const container = document.getElementById('notification-list');
             const badge = document.getElementById('notif-badge');
@@ -335,7 +333,6 @@
                 container.appendChild(div);
             });
 
-            // リアルタイムで通知を購読
             client
               .channel('public:global_notifications')
               .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'contributions' }, payload => {
