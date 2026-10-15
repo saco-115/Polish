@@ -43,13 +43,33 @@
 
     <div class="phone-frame">
         <!-- ヘッダー -->
-        <header class="bg-gradient-to-r from-rose-400 to-pink-500 text-white p-4 shadow-md flex justify-between items-center z-10">
+        <header class="bg-gradient-to-r from-rose-400 to-pink-500 text-white p-4 shadow-md flex justify-between items-center z-30">
             <div>
                 <h1 class="font-bold text-lg tracking-wider">💖 Polish!</h1>
                 <p class="text-[10px] text-pink-100">職人: <span id="header-status" class="font-bold text-yellow-200">確認中...</span></p>
             </div>
-            <span class="text-xs bg-white/25 px-2.5 py-1 rounded-full font-medium">共創ジュエリー</span>
+            <div class="flex items-center gap-2">
+                <span class="text-xs bg-white/25 px-2.5 py-1 rounded-full font-medium">共創ジュエリー</span>
+                <!-- 通知ベルボタン -->
+                <button onclick="toggleNotificationModal()" class="relative bg-white/20 hover:bg-white/30 p-2 rounded-full transition text-sm">
+                    🔔
+                    <span id="notif-badge" class="absolute -top-1 -right-1 bg-rose-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">3</span>
+                </button>
+            </div>
         </header>
+
+        <!-- 通知モーダル / ポップアップ -->
+        <div id="notification-modal" class="absolute top-16 right-4 w-72 bg-white rounded-2xl shadow-xl border border-pink-100 p-3 z-40 hidden space-y-2">
+            <div class="flex justify-between items-center border-b border-pink-50 pb-2">
+                <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1">
+                    <span>🔔</span> 最近の通知・お知らせ
+                </h3>
+                <button onclick="toggleNotificationModal()" class="text-gray-400 hover:text-gray-600 text-xs font-bold px-1.5">✕</button>
+            </div>
+            <div id="notification-list" class="space-y-1.5 max-h-60 overflow-y-auto text-[11px] text-gray-600">
+                <div class="text-gray-400 text-center py-4">新しい通知はありません ✨</div>
+            </div>
+        </div>
 
         <!-- メインコンテンツ領域 -->
         <main id="main-content" class="flex-1 overflow-y-auto pb-20">
@@ -277,6 +297,51 @@
             await fetchProjectsList();
             await fetchCollaboratorProducts();
             await fetchFriendsRooms();
+            await fetchGlobalNotifications();
+        }
+
+        function toggleNotificationModal() {
+            const modal = document.getElementById('notification-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        async function fetchGlobalNotifications() {
+            // 直近の貢献ログやお知らせを全体の通知として取得
+            const { data } = await client.from('contributions').select('*').order('created_at', { ascending: false }).limit(10);
+            const container = document.getElementById('notification-list');
+            const badge = document.getElementById('notif-badge');
+
+            if (!data || data.length === 0) {
+                container.innerHTML = `<div class="text-gray-400 text-center py-4">新しい通知はありません ✨</div>`;
+                badge.classList.add('hidden');
+                return;
+            }
+
+            container.innerHTML = '';
+            badge.classList.remove('hidden');
+            badge.innerText = data.length > 9 ? '9+' : data.length;
+
+            data.forEach(item => {
+                const timeStr = new Date(item.created_at).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+                const div = document.createElement('div');
+                div.className = "bg-pink-50/60 p-2 rounded-xl flex items-start gap-1.5";
+                div.innerHTML = `
+                    <span class="text-rose-500 font-bold">✨</span>
+                    <div class="flex-1">
+                        <p class="text-gray-800 font-medium"><b>${item.username}</b>さんが${item.action_type}</p>
+                        <span class="text-[9px] text-gray-400">${timeStr}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            // リアルタイムで通知を購読
+            client
+              .channel('public:global_notifications')
+              .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'contributions' }, payload => {
+                  fetchGlobalNotifications();
+              })
+              .subscribe();
         }
 
         async function fetchUserProfile() {
