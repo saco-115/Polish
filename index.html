@@ -57,7 +57,7 @@
             </div>
         </header>
 
-        <!-- 通知モーダル / ポップアップ -->
+        <!-- 通知モーダル -->
         <div id="notification-modal" class="absolute top-16 right-4 w-72 bg-white rounded-2xl shadow-xl border border-pink-100 p-3 z-40 hidden space-y-2">
             <div class="flex justify-between items-center border-b border-pink-50 pb-2">
                 <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1">
@@ -77,12 +77,12 @@
             <div id="view-home" class="p-4 space-y-4 hidden">
                 <div class="bg-pink-50 border border-pink-100 rounded-2xl p-4 text-pink-900 shadow-sm">
                     <h2 class="font-bold text-sm">🛍️ 共創ジュエリー・マーケット</h2>
-                    <p class="text-xs mt-1 text-pink-700 leading-relaxed">完成したプレミアムジュエリーや、作家の限定コラボ作品を購入できます。</p>
+                    <p class="text-xs mt-1 text-pink-700 leading-relaxed">レベル別に完成したプレミアムジュエリーや、作家の限定コラボ作品を購入できます。</p>
                 </div>
 
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">✨ コラボ商品・完成品一覧</h3>
+                        <h3 class="font-bold text-gray-800 text-xs tracking-wider uppercase">✨ レベル別完成品・コラボ一覧</h3>
                         <button onclick="switchTab('friends')" class="text-[11px] text-rose-500 font-bold hover:underline">👥 みんなの工房へ →</button>
                     </div>
                     <div id="collaborator-products-container" class="space-y-3">
@@ -93,20 +93,20 @@
                 </div>
             </div>
 
-            <!-- 【画面2：工房（育成 ＆ 宝石選択）】 -->
+            <!-- 【画面2：工房（レベル別育成 ＆ 宝石選択）】 -->
             <div id="view-grow" class="p-4 space-y-4 hidden">
-                <!-- 未選択時の宝石選択エリア -->
+                <!-- 未選択時の宝石選択エリア（レベル別に整理） -->
                 <div id="selection-area" class="space-y-3">
                     <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-rose-900 shadow-sm">
                         <h2 class="font-bold text-sm">💎 育てる宝石を選びましょう！</h2>
-                        <p class="text-xs mt-1 text-rose-700 leading-relaxed">宝石言葉や誕生石を参考に、挑戦したい原石を選んでスタートしてください。</p>
+                        <p class="text-xs mt-1 text-rose-700 leading-relaxed">難易度やレベル・誕生石を確認して原石を選びましょう。（※育成アクションは1時間に1回行えます）</p>
                     </div>
                     <div id="project-list-container" class="space-y-3">
                         <div class="bg-white p-4 text-center text-xs text-gray-400 rounded-2xl">原石リストを読み込み中...</div>
                     </div>
                 </div>
 
-                <!-- 選択・育成中の工房エリア（最初は非表示） -->
+                <!-- 選択・育成中の工房エリア -->
                 <div id="workshop-area" class="space-y-4 hidden">
                     <div class="flex justify-between items-center bg-pink-50 px-3 py-2 rounded-xl">
                         <button onclick="backToProjectSelect()" class="text-xs text-rose-500 font-bold hover:underline">← 宝石をえらびなおす</button>
@@ -114,7 +114,7 @@
                     </div>
 
                     <div class="text-center space-y-1 py-1">
-                        <span id="project-badge" class="text-[10px] bg-rose-100 text-rose-800 font-bold px-3 py-1 rounded-full">⛏️ 段階1：荒削り</span>
+                        <span id="project-badge" class="text-[10px] bg-rose-100 text-rose-800 font-bold px-3 py-1 rounded-full">⛏️ レベル1：荒削り</span>
                         <h2 id="current-item-title" class="font-bold text-gray-800 text-base pt-1">原石名</h2>
                         <p id="current-item-author" class="text-xs text-rose-500 font-medium">監修</p>
                     </div>
@@ -124,7 +124,7 @@
                         <div id="gem-icon" class="text-5xl my-2">🪨</div>
                         
                         <div class="my-1">
-                            <span class="text-[10px] uppercase tracking-widest text-stone-400">現在の土台金属</span>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400">現在のメタルランク</span>
                             <div id="metal-rank-display" class="text-xs font-bold text-pink-300">真鍮 (Brass) - ベーシック</div>
                         </div>
 
@@ -134,12 +134,12 @@
                             <div id="progress-bar" class="bg-gradient-to-r from-pink-400 to-rose-500 h-full rounded-full transition-all duration-300" style="width: 5%;"></div>
                         </div>
 
-                        <p id="status-message" class="text-[11px] text-stone-300 mt-2">タップして原石を磨こう！</p>
+                        <p id="cooldown-timer-msg" class="text-[11px] text-yellow-300 mt-2 font-bold">⏳ 次回のアクションまで: 確認中...</p>
                     </div>
 
                     <!-- アクションボタン -->
                     <button id="action-btn" onclick="performAction()" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-3 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm">
-                        🔨 削り・磨きアクションを行う
+                        🔨 研磨・おてつだいアクションを行う
                     </button>
 
                     <!-- 紹介コード・シェアセクション -->
@@ -179,7 +179,7 @@
                 </div>
             </div>
 
-            <!-- 【画面4：マイページ（初期表示）】 -->
+            <!-- 【画面4：マイページ】 -->
             <div id="view-mypage" class="p-4 space-y-4">
                 <div id="auth-container" class="bg-white border border-gray-100 rounded-2xl p-4 space-y-3 shadow-sm">
                     <h3 class="font-bold text-gray-800 text-sm">🔐 ログインが必要です</h3>
@@ -269,11 +269,10 @@
 
         let currentProgress = 5;
         let currentStage = 1;
-        let currentMetal = '真鍮 (Brass) - 베ーシック';
+        let currentMetal = '真鍮 (Brass) - ベーシック';
         let currentTitle = '原石';
         let currentAuthor = '';
-        let currentDifficulty = 1;
-        let visitingOwnerName = null;
+        let currentUpdatedAt = null;
 
         async function initApp() {
             try {
@@ -283,10 +282,10 @@
                 if (currentUser) {
                     await fetchUserProfile();
                     updateAuthUI();
-                    switchTab('home'); // ログイン済みならホームへ
+                    switchTab('home');
                 } else {
                     updateAuthUI();
-                    switchTab('mypage'); // 未ログインならログイン（マイページ）画面へ
+                    switchTab('mypage');
                 }
 
                 client.auth.onAuthStateChange(async (event, session) => {
@@ -400,9 +399,7 @@
                 return;
             }
 
-            // 認証メールのリンク先が正しく現在のページに戻るように設定
             const redirectTo = window.location.origin + window.location.pathname;
-
             const { data, error } = await client.auth.signUp({ 
                 email, 
                 password,
@@ -474,10 +471,9 @@
         async function fetchProjectsList() {
             const container = document.getElementById('project-list-container');
             try {
-                const { data, error } = await client.from('projects').select('*').order('created_at', { ascending: true });
+                const { data, error } = await client.from('projects').select('*').order('stage', { ascending: true });
 
                 if (error) {
-                    console.error("Projects Error:", error);
                     container.innerHTML = `<div class="bg-rose-50 border border-rose-200 p-4 text-center text-xs text-rose-600 rounded-2xl">⚠️ 通信エラー: ${error.message}</div>`;
                     return;
                 }
@@ -490,7 +486,7 @@
             client
               .channel('public:projects')
               .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, async () => {
-                  const { data: updatedData } = await client.from('projects').select('*').order('created_at', { ascending: true });
+                  const { data: updatedData } = await client.from('projects').select('*').order('stage', { ascending: true });
                   renderProjectsList(updatedData);
               })
               .subscribe();
@@ -503,81 +499,66 @@
                 return;
             }
 
-            container.innerHTML = '';
+            // レベル（ステージ）ごとにグループ分け
+            const grouped = { 1: [], 2: [], 3: [], 4: [], 5: [] };
             projects.forEach(proj => {
-                let diffBadge = '⭐ 標準 (+4%)';
-                let diffColor = 'bg-blue-50 text-blue-600';
-                let gemMeaning = '大きな可能性と富を引き寄せる、自然のエネルギー宿る原石。';
-                let birthStone = '通年（オールマイティ）';
+                const st = proj.stage || 1;
+                if (!grouped[st]) grouped[st] = [];
+                grouped[st].push(proj);
+            });
 
-                if (proj.title.includes('ルビー')) { 
-                    diffBadge = '⭐⭐ やや困難 (+3%)'; 
-                    diffColor = 'bg-pink-50 text-pink-600';
-                    gemMeaning = '「情熱・勇気・純愛」勝利を呼ぶ情熱の赤。';
-                    birthStone = '7月の誕生石';
-                }
-                else if (proj.title.includes('エメラルド')) { 
-                    diffBadge = '⭐⭐⭐ 困難 (+2%)'; 
-                    diffColor = 'bg-emerald-50 text-emerald-600';
-                    gemMeaning = '「幸運・知性・癒やし」心身をリフレッシュする緑の奇跡。';
-                    birthStone = '5月の誕生石';
-                }
-                else if (proj.title.includes('アメジスト')) { 
-                    diffBadge = '⭐⭐⭐⭐ 超困難 (+1.5%)'; 
-                    diffColor = 'bg-purple-50 text-purple-600';
-                    gemMeaning = '「高貴・誠実・心の平和」直感力を高める紫の神秘。';
-                    birthStone = '2月の誕生石';
-                }
-                else if (proj.title.includes('ダイヤモンド')) { 
-                    diffBadge = '⭐⭐⭐⭐⭐ 至難の業 (+1%)'; 
-                    diffColor = 'bg-rose-50 text-rose-600';
-                    gemMeaning = '「永遠の絆・純潔・不屈」地上で最も硬い最強の輝き。';
-                    birthStone = '4月の誕生石';
-                }
-                else if (proj.title.includes('琥珀')) {
-                    gemMeaning = '「長寿・安らぎ・大きな富」太古の木の命が宿る癒やしの石。';
-                    birthStone = '11月の誕生石';
-                }
-                else if (proj.title.includes('水晶')) {
-                    gemMeaning = '「調和・浄化・万能」あらゆるものを清め、潜在能力を引き出す。';
-                    birthStone = '4月の誕生石';
-                }
+            container.innerHTML = '';
+            
+            const stageNames = {
+                1: '⛏️ レベル1：荒削り・原石ステージ',
+                2: '📐 レベル2：精密面取り・形状出し',
+                3: '✨ レベル3：下地ポリッシュ（シルバー化）',
+                4: '👑 レベル4：鏡面仕上げ（K18ゴールド）',
+                5: '🌟 レベル5：究極完成・プレミアムジュエリー'
+            };
 
-                const div = document.createElement('div');
-                div.className = "bg-white border border-pink-100 rounded-2xl p-4 space-y-2 shadow-sm hover:border-pink-300 transition";
-                div.innerHTML = `
-                    <div>
+            for (let s = 1; s <= 5; s++) {
+                const list = grouped[s];
+                if (!list || list.length === 0) continue;
+
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = "space-y-2 pt-1";
+                sectionDiv.innerHTML = `<h3 class="font-bold text-xs text-gray-700 bg-pink-100/70 px-3 py-1.5 rounded-xl">${stageNames[s]} (${list.length}件)</h3>`;
+
+                list.forEach(proj => {
+                    let gemMeaning = '大きな可能性と富を引き寄せる原石。';
+                    let birthStone = '通年';
+                    if (proj.title.includes('ルビー')) { gemMeaning = '勝利を呼ぶ情熱の赤。'; birthStone = '7月の誕生石'; }
+                    else if (proj.title.includes('エメラルド')) { gemMeaning = '心身を癒やす緑の奇跡。'; birthStone = '5月の誕生石'; }
+                    else if (proj.title.includes('アメジスト')) { gemMeaning = '直感力を高める紫の神秘。'; birthStone = '2月の誕生石'; }
+                    else if (proj.title.includes('ダイヤモンド')) { gemMeaning = '不屈の輝きを持つ最強の石。'; birthStone = '4月の誕生石'; }
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = "bg-white border border-pink-100 rounded-2xl p-3.5 space-y-2 shadow-sm hover:border-pink-300 transition";
+                    itemDiv.innerHTML = `
                         <div class="flex justify-between items-center">
                             <span class="text-[10px] text-rose-500 font-bold bg-pink-50 px-2 py-0.5 rounded-md">${proj.author}</span>
-                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-md ${diffColor}">${diffBadge}</span>
+                            <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">完成度: ${proj.progress}%</span>
                         </div>
-                        <h4 class="font-bold text-gray-800 text-sm mt-1.5">${proj.title}</h4>
-                        <div class="bg-rose-50/60 p-2 rounded-xl my-2 space-y-1 text-[11px]">
-                            <p class="text-rose-900 font-medium">✨ 意味: ${gemMeaning}</p>
-                            <p class="text-rose-700 font-semibold">💎 誕生石: ${birthStone}</p>
+                        <h4 class="font-bold text-gray-800 text-sm">${proj.title}</h4>
+                        <p class="text-[10px] text-gray-400">メタル: ${proj.metal_name}</p>
+                        <div class="bg-rose-50/50 p-2 rounded-xl text-[11px] text-rose-900">
+                            ✨ 意味: ${gemMeaning} (${birthStone})
                         </div>
-                        <p class="text-[10px] text-gray-400">完成度: ${proj.progress}% / ${proj.metal_name}</p>
-                    </div>
-                    <button onclick="selectProject('${proj.id}', null)" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
-                        この原石を育てる 💎
-                    </button>
-                `;
-                container.appendChild(div);
-            });
+                        <button onclick="selectProject('${proj.id}')" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold py-2 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
+                            この工房・原石を育てる 💎
+                        </button>
+                    `;
+                    sectionDiv.appendChild(itemDiv);
+                });
+                container.appendChild(sectionDiv);
+            }
         }
 
         async function fetchFriendsRooms() {
             const { data, error } = await client.from('projects').select('*').order('progress', { ascending: false });
             if (error) return;
             renderFriendsRooms(data);
-
-            client
-              .channel('public:friends_rooms')
-              .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, async () => {
-                  const { data: updatedData } = await client.from('projects').select('*').order('progress', { ascending: false });
-                  renderFriendsRooms(updatedData);
-              })
-              .subscribe();
         }
 
         function renderFriendsRooms(projects) {
@@ -589,25 +570,19 @@
 
             container.innerHTML = '';
             projects.forEach(proj => {
-                let boostText = 'おてつだい +4%';
-                if (proj.title.includes('ルビー')) boostText = 'おてつだい +3%';
-                else if (proj.title.includes('エメラルド')) boostText = 'おてつだい +2%';
-                else if (proj.title.includes('アメジスト')) boostText = 'おてつだい +1.5%';
-                else if (proj.title.includes('ダイヤモンド')) boostText = 'おてつだい +1%';
-
                 const div = document.createElement('div');
                 div.className = "bg-white border border-pink-100 rounded-2xl p-4 flex justify-between items-center shadow-sm hover:border-pink-300 transition";
                 div.innerHTML = `
                     <div>
                         <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] bg-pink-50 text-rose-700 font-bold px-2 py-0.5 rounded-md">🏠 ${proj.author}のルーム</span>
+                            <span class="text-[10px] bg-pink-50 text-rose-700 font-bold px-2 py-0.5 rounded-md">🏠 ${proj.author}のルーム (Lv.${proj.stage})</span>
                             <span class="text-[10px] text-rose-500 font-bold">${proj.progress}%</span>
                         </div>
                         <h4 class="font-bold text-gray-800 text-sm mt-1">${proj.title}</h4>
-                        <p class="text-[10px] text-gray-400">${boostText}</p>
+                        <p class="text-[10px] text-gray-400">${proj.metal_name}</p>
                     </div>
                     <button onclick="visitFriendRoom('${proj.id}', '${proj.author}')" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
-                        おてつだいする 🔨
+                        おてつだい 🔨
                     </button>
                 `;
                 container.appendChild(div);
@@ -632,7 +607,7 @@
                 currentMetal = data.metal_name;
                 currentTitle = data.title;
                 currentAuthor = data.author;
-                visitingOwnerName = ownerName;
+                currentUpdatedAt = data.updated_at;
 
                 updateUI();
                 document.getElementById('selection-area').classList.add('hidden');
@@ -640,27 +615,26 @@
 
                 const ownerTag = document.getElementById('room-owner-tag');
                 const actionBtn = document.getElementById('action-btn');
-                const boostPercent = currentTitle.includes('ダイヤモンド') ? 1 : currentTitle.includes('アメジスト') ? 1.5 : currentTitle.includes('エメラルド') ? 2 : currentTitle.includes('ルビー') ? 3 : 4;
 
                 if (ownerName === currentUsername || ownerName === currentAuthor) {
                     ownerTag.innerText = "マイ工房";
-                    actionBtn.innerText = `🔨 削り・磨きアクションを行う (+${boostPercent}%)`;
+                    actionBtn.innerText = `🔨 研磨アクションを行う`;
                 } else {
                     ownerTag.innerText = `🏠 ${ownerName}さんの工房にお邪魔中`;
-                    actionBtn.innerText = `🔨 ${ownerName}さんの宝石をおてつだい磨きする (+${boostPercent}%)`;
+                    actionBtn.innerText = `🔨 ${ownerName}さんの宝石をおてつだいする`;
                 }
 
+                checkCooldown();
                 listenToLogs();
                 switchTab('grow');
             }
         }
 
         async function selectProject(projectId) {
-            await visitFriendRoom(projectId, currentUsername);
+            await visitFriendRoom(projectId, currentAuthor);
         }
 
         function backToProjectSelect() {
-            visitingOwnerName = null;
             document.getElementById('workshop-area').classList.add('hidden');
             document.getElementById('selection-area').classList.remove('hidden');
         }
@@ -675,14 +649,6 @@
         async function fetchCollaboratorProducts() {
             const { data } = await client.from('products').select('*').order('created_at', { ascending: false });
             renderProducts(data);
-
-            client
-              .channel('public:products')
-              .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, async () => {
-                  const { data: updatedData } = await client.from('products').select('*').order('created_at', { ascending: false });
-                  renderProducts(updatedData);
-              })
-              .subscribe();
         }
 
         function renderProducts(products) {
@@ -769,36 +735,86 @@
             });
         }
 
+        // クールダウン（1時間に1回のみ成長可能）のチェック関数
+        function checkCooldown() {
+            const actionBtn = document.getElementById('action-btn');
+            const timerMsg = document.getElementById('cooldown-timer-msg');
+
+            if (!currentUpdatedAt) {
+                actionBtn.disabled = false;
+                actionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                timerMsg.innerText = "✨ 今すぐアクション実行可能です！";
+                return;
+            }
+
+            const lastTime = new Date(currentUpdatedAt).getTime();
+            const now = new Date().getTime();
+            const diffMinutes = Math.floor((now - lastTime) / (1000 * 60));
+            const cooldownMinutes = 60; // 1時間制限
+
+            if (diffMinutes < cooldownMinutes) {
+                const remain = cooldownMinutes - diffMinutes;
+                actionBtn.disabled = true;
+                actionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                timerMsg.innerText = `⏳ 次回のアクションまであと ${remain} 分（計画的育成中）`;
+            } else {
+                actionBtn.disabled = false;
+                actionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                timerMsg.innerText = "✨ 今すぐアクション実行可能です！";
+            }
+        }
+
         async function performAction() {
             const { data: { session } } = await client.auth.getSession();
             currentUser = session ? session.user : null;
 
             if (!currentUser || !currentProjectId) {
-                alert("ログインしてください！あるいは育てる宝石を選んでください。");
+                alert("ログインしてください！");
                 switchTab('mypage');
                 return;
             }
 
-            let addPercent = 4;
-            if (currentTitle.includes('ダイヤモンド')) addPercent = 1;
-            else if (currentTitle.includes('アメジスト')) addPercent = 1.5;
-            else if (currentTitle.includes('エメラルド')) addPercent = 2;
-            else if (currentTitle.includes('ルビー')) addPercent = 3;
+            // 再度クールダウン確認
+            if (currentUpdatedAt) {
+                const lastTime = new Date(currentUpdatedAt).getTime();
+                const now = new Date().getTime();
+                const diffMinutes = Math.floor((now - lastTime) / (1000 * 60));
+                if (diffMinutes < 60) {
+                    alert("連続での育成はできません。前回の研磨から1時間以上空ける必要があります。");
+                    return;
+                }
+            }
 
+            let addPercent = 5;
             currentProgress += addPercent;
             if (currentProgress > 100) currentProgress = 100;
 
-            let actionText = visitingOwnerName ? `がおてつだいハンマーで磨いてくれました！ (+${addPercent}%)` : `が丁寧に磨き上げました！ (+${addPercent}%)`;
             if (currentProgress <= 20) { currentStage = 1; }
-            else if (currentProgress <= 45) { currentStage = 2; currentMetal = '真鍮 (Brass) - ルース精密整形中'; }
-            else if (currentProgress <= 70) { currentStage = 3; currentMetal = '✨ シルバー925 (Sterling Silver) に進化！'; }
-            else if (currentProgress < 100) { currentStage = 4; currentMetal = '👑 最高級 K18ゴールド仕様 に進化！'; }
+            else if (currentProgress <= 45) { currentStage = 2; currentMetal = '真鍮 (Brass) - 精密整形中'; }
+            else if (currentProgress <= 70) { currentStage = 3; currentMetal = '✨ シルバー925 (Sterling Silver)'; }
+            else if (currentProgress < 100) { currentStage = 4; currentMetal = '👑 最高級 K18ゴールド'; }
             else { currentStage = 5; currentMetal = '🌟 プレミアムジュエリー究極完成'; }
 
-            await client.from('projects').update({ progress: currentProgress, stage: currentStage, metal_name: currentMetal, updated_at: new Date() }).eq('id', currentProjectId);
-            await client.from('contributions').insert([{ project_id: currentProjectId, user_id: currentUser.id, username: currentUsername, action_type: actionText }]);
+            const nowIso = new Date().toISOString();
+            currentUpdatedAt = nowIso;
+
+            await client.from('projects').update({ 
+                progress: currentProgress, 
+                stage: currentStage, 
+                metal_name: currentMetal, 
+                updated_at: nowIso 
+            }).eq('id', currentProjectId);
+
+            await client.from('contributions').insert([{ 
+                project_id: currentProjectId, 
+                user_id: currentUser.id, 
+                username: currentUsername, 
+                action_type: `が研磨を行いました (+${addPercent}%)` 
+            }]);
 
             updateUI();
+            checkCooldown();
+            alert("✨ 丁寧に研磨を行いました！完成度がアップしました。");
         }
 
         async function listenToLogs() {
@@ -844,37 +860,13 @@
 
             const badge = document.getElementById('project-badge');
             const actionBtn = document.getElementById('action-btn');
-            const statusMsg = document.getElementById('status-message');
             const icon = document.getElementById('gem-icon');
-            const boostPercent = currentTitle.includes('ダイヤモンド') ? 1 : currentTitle.includes('アメジスト') ? 1.5 : currentTitle.includes('エメラルド') ? 2 : currentTitle.includes('ルビー') ? 3 : 4;
 
-            if (currentStage === 1) {
-                badge.innerText = "⛏️ 段階1：荒削り（ハンマー作業）";
-                icon.innerText = currentTitle.includes('ルビー') ? '🔥' : currentTitle.includes('エメラルド') ? '🌿' : currentTitle.includes('ダイヤモンド') ? '💠' : '🪨';
-            } else if (currentStage === 2) {
-                badge.innerText = "📐 段階2：精密面取り・形状出し";
-                icon.innerText = "⛏️";
-            } else if (currentStage === 3) {
-                badge.innerText = "✨ 段階3：下地ポリッシュ（金属進化！）";
-                icon.innerText = "💎";
-            } else if (currentStage === 4) {
-                badge.innerText = "👑 段階4：鏡面仕上げ（最高級K18へ！）";
-                icon.innerText = "💍";
-            } else {
-                badge.innerText = "🎉 制作＆金属進化 完了！";
-                icon.innerText = "✨💎✨";
-                actionBtn.innerHTML = "🎉 特価オーダー確定済み";
-                actionBtn.className = "w-full bg-emerald-600 text-white font-bold py-3 rounded-2xl shadow-md cursor-default text-sm";
-                statusMsg.innerText = "おめでとうございます！最高級ジュエリーの製作が完了しました。";
-            }
-
-            if (currentStage < 5) {
-                if (visitingOwnerName && visitingOwnerName !== currentUsername) {
-                    actionBtn.innerText = `🔨 ${visitingOwnerName}さんの宝石をおてつだい磨きする (+${boostPercent}%)`;
-                } else {
-                    actionBtn.innerText = `🔨 削り・磨きアクションを行う (+${boostPercent}%)`;
-                }
-            }
+            if (currentStage === 1) { badge.innerText = "⛏️ レベル1：荒削り"; icon.innerText = "🪨"; }
+            else if (currentStage === 2) { badge.innerText = "📐 レベル2：精密整形"; icon.innerText = "⛏️"; }
+            else if (currentStage === 3) { badge.innerText = "✨ レベル3：シルバー化"; icon.innerText = "💎"; }
+            else if (currentStage === 4) { badge.innerText = "👑 レベル4：K18ゴールド"; icon.innerText = "💍"; }
+            else { badge.innerText = "🌟 レベル5：究極完成"; icon.innerText = "✨💎✨"; actionBtn.innerHTML = "🎉 完成済み"; actionBtn.disabled = true; }
         }
 
         async function switchTab(tabName) {
@@ -901,6 +893,10 @@
 
             if (tabName === 'friends') {
                 fetchFriendsRooms();
+            } else if (tabName === 'home') {
+                fetchCollaboratorProducts();
+            } else if (tabName === 'grow' && !currentProjectId) {
+                fetchProjectsList();
             }
         }
     </script>
