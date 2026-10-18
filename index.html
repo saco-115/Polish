@@ -276,27 +276,31 @@
         let visitingOwnerName = null;
 
         async function initApp() {
-            const { data: { session } } = await client.auth.getSession();
-            currentUser = session ? session.user : null;
-
-            if (currentUser) {
-                await fetchUserProfile();
-            }
-            updateAuthUI();
-            switchTab('home');
-
-            client.auth.onAuthStateChange(async (event, session) => {
+            try {
+                const { data: { session } } = await client.auth.getSession();
                 currentUser = session ? session.user : null;
+
                 if (currentUser) {
                     await fetchUserProfile();
                 }
                 updateAuthUI();
-            });
+                switchTab('home');
 
-            await fetchProjectsList();
-            await fetchCollaboratorProducts();
-            await fetchFriendsRooms();
-            await fetchGlobalNotifications();
+                client.auth.onAuthStateChange(async (event, session) => {
+                    currentUser = session ? session.user : null;
+                    if (currentUser) {
+                        await fetchUserProfile();
+                    }
+                    updateAuthUI();
+                });
+
+                await fetchProjectsList();
+                await fetchCollaboratorProducts();
+                await fetchFriendsRooms();
+                await fetchGlobalNotifications();
+            } catch (err) {
+                console.error("Init error:", err);
+            }
         }
 
         function toggleNotificationModal() {
@@ -305,11 +309,11 @@
         }
 
         async function fetchGlobalNotifications() {
-            const { data } = await client.from('contributions').select('*').order('created_at', { ascending: false }).limit(10);
+            const { data, error } = await client.from('contributions').select('*').order('created_at', { ascending: false }).limit(10);
             const container = document.getElementById('notification-list');
             const badge = document.getElementById('notif-badge');
 
-            if (!data || data.length === 0) {
+            if (error || !data || data.length === 0) {
                 container.innerHTML = `<div class="text-gray-400 text-center py-4">新しい通知はありません ✨</div>`;
                 badge.classList.add('hidden');
                 return;
@@ -453,7 +457,16 @@
         }
 
         async function fetchProjectsList() {
-            const { data } = await client.from('projects').select('*').order('created_at', { ascending: true });
+            const { data, error } = await client.from('projects').select('*').order('created_at', { ascending: true });
+            
+            if (error) {
+                const container = document.getElementById('project-list-container');
+                container.innerHTML = `<div class="bg-rose-50 border border-rose-200 p-4 text-center text-xs text-rose-600 rounded-2xl">
+                    ⚠️ エラーが発生しました:<br><span class="font-bold">${error.message}</span>
+                </div>`;
+                return;
+            }
+
             renderProjectsList(data);
 
             client
@@ -501,7 +514,8 @@
         }
 
         async function fetchFriendsRooms() {
-            const { data } = await client.from('projects').select('*').order('progress', { ascending: false });
+            const { data, error } = await client.from('projects').select('*').order('progress', { ascending: false });
+            if (error) return;
             renderFriendsRooms(data);
 
             client
