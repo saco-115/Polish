@@ -294,12 +294,15 @@
                     updateAuthUI();
                 });
 
-                await fetchProjectsList();
-                await fetchCollaboratorProducts();
-                await fetchFriendsRooms();
-                await fetchGlobalNotifications();
+                // すべてのデータ取得を確実に完了させる
+                await Promise.all([
+                    fetchProjectsList(),
+                    fetchCollaboratorProducts(),
+                    fetchFriendsRooms(),
+                    fetchGlobalNotifications()
+                ]);
             } catch (err) {
-                console.error("Init error:", err);
+                console.error("Init Error:", err);
             }
         }
 
@@ -457,17 +460,25 @@
         }
 
         async function fetchProjectsList() {
-            const { data, error } = await client.from('projects').select('*').order('created_at', { ascending: true });
-            
-            if (error) {
-                const container = document.getElementById('project-list-container');
-                container.innerHTML = `<div class="bg-rose-50 border border-rose-200 p-4 text-center text-xs text-rose-600 rounded-2xl">
-                    ⚠️ エラーが発生しました:<br><span class="font-bold">${error.message}</span>
-                </div>`;
-                return;
-            }
+            const container = document.getElementById('project-list-container');
+            try {
+                const { data, error } = await client.from('projects').select('*').order('created_at', { ascending: true });
 
-            renderProjectsList(data);
+                if (error) {
+                    console.error("Projects Error:", error);
+                    container.innerHTML = `<div class="bg-rose-50 border border-rose-200 p-4 text-center text-xs text-rose-600 rounded-2xl">
+                        ⚠️ 通信エラー: ${error.message}
+                    </div>`;
+                    return;
+                }
+
+                renderProjectsList(data);
+            } catch (err) {
+                console.error("Fetch Catch:", err);
+                container.innerHTML = `<div class="bg-rose-50 border border-rose-200 p-4 text-center text-xs text-rose-600 rounded-2xl">
+                    ⚠️ データ取得失敗: ${err.message || '不明なエラー'}
+                </div>`;
+            }
 
             client
               .channel('public:projects')
