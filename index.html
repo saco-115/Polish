@@ -93,13 +93,13 @@
                 </div>
             </div>
 
-            <!-- 【画面2：工房（レベル別育成 ＆ 宝石選択）】 -->
+            <!-- 【画面2：工房（育成 ＆ 宝石選択）】 -->
             <div id="view-grow" class="p-4 space-y-4 hidden">
-                <!-- 未選択時の宝石選択エリア（レベル別に整理） -->
+                <!-- 未選択時の宝石選択エリア -->
                 <div id="selection-area" class="space-y-3">
                     <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-rose-900 shadow-sm">
                         <h2 class="font-bold text-sm">💎 育てる宝石を選びましょう！</h2>
-                        <p class="text-xs mt-1 text-rose-700 leading-relaxed">難易度やレベル・誕生石を確認して原石を選びましょう。（※育成アクションは1時間に1回行えます）</p>
+                        <p class="text-xs mt-1 text-rose-700 leading-relaxed">一度選んだ宝石は、究極完成（Lv.5）を迎えるまで他の原石には挑戦できません。じっくり1つを育てましょう。</p>
                     </div>
                     <div id="project-list-container" class="space-y-3">
                         <div class="bg-white p-4 text-center text-xs text-gray-400 rounded-2xl">原石リストを読み込み中...</div>
@@ -109,8 +109,8 @@
                 <!-- 選択・育成中の工房エリア -->
                 <div id="workshop-area" class="space-y-4 hidden">
                     <div class="flex justify-between items-center bg-pink-50 px-3 py-2 rounded-xl">
-                        <button onclick="backToProjectSelect()" class="text-xs text-rose-500 font-bold hover:underline">← 宝石をえらびなおす</button>
-                        <span id="room-owner-tag" class="text-[10px] bg-pink-200 text-pink-800 font-bold px-2 py-0.5 rounded-full">マイ工房</span>
+                        <span id="room-owner-tag" class="text-[10px] bg-pink-200 text-pink-800 font-bold px-2 py-0.5 rounded-full">マイ工房（育成集中中）</span>
+                        <span id="finish-status-tag" class="text-[10px] text-rose-600 font-bold">完走まであと少し！</span>
                     </div>
 
                     <div class="text-center space-y-1 py-1">
@@ -137,10 +137,17 @@
                         <p id="cooldown-timer-msg" class="text-[11px] text-yellow-300 mt-2 font-bold">⏳ 次回のアクションまで: 確認中...</p>
                     </div>
 
-                    <!-- アクションボタン -->
-                    <button id="action-btn" onclick="performAction()" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-3 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm">
-                        🔨 研磨・おてつだいアクションを行う
-                    </button>
+                    <!-- アクションボタン ＆ 広告スキップボタン -->
+                    <div class="space-y-2">
+                        <button id="action-btn" onclick="performAction()" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-3 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-sm">
+                            🔨 研磨アクションを行う（1時間に1回）
+                        </button>
+                        
+                        <!-- 広告視聴スキップボタン -->
+                        <button id="ad-btn" onclick="watchAdToSkip()" class="w-full bg-gradient-to-r from-amber-400 to-orange-400 text-white font-bold py-2.5 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-xs hidden">
+                            📺 広告を見て待ち時間をスキップしてすぐ削る！
+                        </button>
+                    </div>
 
                     <!-- 紹介コード・シェアセクション -->
                     <div class="bg-white border border-pink-100 rounded-2xl p-4 space-y-2 shadow-sm">
@@ -482,24 +489,15 @@
             } catch (err) {
                 console.error("Fetch Catch:", err);
             }
-
-            client
-              .channel('public:projects')
-              .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, async () => {
-                  const { data: updatedData } = await client.from('projects').select('*').order('stage', { ascending: true });
-                  renderProjectsList(updatedData);
-              })
-              .subscribe();
         }
 
         function renderProjectsList(projects) {
             const container = document.getElementById('project-list-container');
             if (!projects || projects.length === 0) {
-                container.innerHTML = `<div class="bg-white p-4 text-center text-xs text-gray-400 rounded-2xl">育成可能な原石がありません。<br>SupabaseのSQLエディタで初期データを挿入してください。</div>`;
+                container.innerHTML = `<div class="bg-white p-4 text-center text-xs text-gray-400 rounded-2xl">原石がありません。</div>`;
                 return;
             }
 
-            // レベル（ステージ）ごとにグループ分け
             const grouped = { 1: [], 2: [], 3: [], 4: [], 5: [] };
             projects.forEach(proj => {
                 const st = proj.stage || 1;
@@ -514,7 +512,7 @@
                 2: '📐 レベル2：精密面取り・形状出し',
                 3: '✨ レベル3：下地ポリッシュ（シルバー化）',
                 4: '👑 レベル4：鏡面仕上げ（K18ゴールド）',
-                5: '🌟 レベル5：究極完成・プレミアムジュエリー'
+                5: '🌟 레ベル5：究極完成・プレミアムジュエリー'
             };
 
             for (let s = 1; s <= 5; s++) {
@@ -546,7 +544,7 @@
                             ✨ 意味: ${gemMeaning} (${birthStone})
                         </div>
                         <button onclick="selectProject('${proj.id}')" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold py-2 rounded-xl shadow hover:opacity-90 active:scale-95 transition">
-                            この工房・原石を育てる 💎
+                            この原石を育てる（決定する） 💎
                         </button>
                     `;
                     sectionDiv.appendChild(itemDiv);
@@ -594,7 +592,7 @@
             currentUser = session ? session.user : null;
 
             if (!currentUser) {
-                alert("おてつだいするにはログインが必要です！");
+                alert("ログインが必要です！");
                 switchTab('mypage');
                 return;
             }
@@ -610,6 +608,7 @@
                 currentUpdatedAt = data.updated_at;
 
                 updateUI();
+                
                 document.getElementById('selection-area').classList.add('hidden');
                 document.getElementById('workshop-area').classList.remove('hidden');
 
@@ -617,7 +616,7 @@
                 const actionBtn = document.getElementById('action-btn');
 
                 if (ownerName === currentUsername || ownerName === currentAuthor) {
-                    ownerTag.innerText = "マイ工房";
+                    ownerTag.innerText = "マイ工房（育成集中中・変更不可）";
                     actionBtn.innerText = `🔨 研磨アクションを行う`;
                 } else {
                     ownerTag.innerText = `🏠 ${ownerName}さんの工房にお邪魔中`;
@@ -631,19 +630,16 @@
         }
 
         async function selectProject(projectId) {
+            const lockedId = localStorage.getItem('active_project_id');
+            if (lockedId && lockedId !== projectId) {
+                const { data } = await client.from('projects').select('title').eq('id', lockedId).single();
+                const lockedTitle = data ? data.title : '別の原石';
+                alert(`⚠️ 現在「${lockedTitle}」を育成中のため、他の原石を選ぶことはできません！完了までこの子に集中してください✨`);
+                return;
+            }
+
+            localStorage.setItem('active_project_id', projectId);
             await visitFriendRoom(projectId, currentAuthor);
-        }
-
-        function backToProjectSelect() {
-            document.getElementById('workshop-area').classList.add('hidden');
-            document.getElementById('selection-area').classList.remove('hidden');
-        }
-
-        function copyInviteCode() {
-            const codeBox = document.getElementById('invite-code-box');
-            codeBox.select();
-            navigator.clipboard.writeText(codeBox.value);
-            alert("紹介コードをコピーしました！仲間とシェアしよう ✨");
         }
 
         async function fetchCollaboratorProducts() {
@@ -735,14 +731,16 @@
             });
         }
 
-        // クールダウン（1時間に1回のみ成長可能）のチェック関数
+        // クールダウンチェック（広告ボタンの表示制御も行う）
         function checkCooldown() {
             const actionBtn = document.getElementById('action-btn');
+            const adBtn = document.getElementById('ad-btn');
             const timerMsg = document.getElementById('cooldown-timer-msg');
 
             if (!currentUpdatedAt) {
                 actionBtn.disabled = false;
                 actionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                adBtn.classList.add('hidden'); // 待ってなければ広告ボタンは非表示
                 timerMsg.innerText = "✨ 今すぐアクション実行可能です！";
                 return;
             }
@@ -750,18 +748,40 @@
             const lastTime = new Date(currentUpdatedAt).getTime();
             const now = new Date().getTime();
             const diffMinutes = Math.floor((now - lastTime) / (1000 * 60));
-            const cooldownMinutes = 60; // 1時間制限
+            const cooldownMinutes = 60;
 
             if (diffMinutes < cooldownMinutes) {
                 const remain = cooldownMinutes - diffMinutes;
                 actionBtn.disabled = true;
                 actionBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                timerMsg.innerText = `⏳ 次回のアクションまであと ${remain} 分（計画的育成中）`;
+                adBtn.classList.remove('hidden'); // 待機中なので広告ボタンを表示
+                timerMsg.innerText = `⏳ 次回のアクションまであと ${remain} 分`;
             } else {
                 actionBtn.disabled = false;
                 actionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                adBtn.classList.add('hidden');
                 timerMsg.innerText = "✨ 今すぐアクション実行可能です！";
             }
+        }
+
+        // 広告を見てスキップする関数
+        async function watchAdToSkip() {
+            if (!currentProjectId) return;
+
+            // 広告視聴中の演出
+            if (!confirm("📺 広告を視聴しますか？（3秒間の視聴で待ち時間をスキップできます）")) return;
+
+            // 疑似的なロード・広告視聴演出
+            alert("▶ 広告再生中... (CM: 共創ジュエリーの魅力をご紹介中...)");
+
+            // タイムスタンプを1時間以上前に書き換えてクールダウンを解除
+            const pastIso = new Date(Date.now() - 61 * 60 * 1000).toISOString();
+            currentUpdatedAt = pastIso;
+
+            await client.from('projects').update({ updated_at: pastIso }).eq('id', currentProjectId);
+
+            checkCooldown();
+            alert("✨ 広告視聴完了！待ち時間がスキップされました。すぐに研磨できます！");
         }
 
         async function performAction() {
@@ -774,13 +794,12 @@
                 return;
             }
 
-            // 再度クールダウン確認
             if (currentUpdatedAt) {
                 const lastTime = new Date(currentUpdatedAt).getTime();
                 const now = new Date().getTime();
                 const diffMinutes = Math.floor((now - lastTime) / (1000 * 60));
                 if (diffMinutes < 60) {
-                    alert("連続での育成はできません。前回の研磨から1時間以上空ける必要があります。");
+                    alert("連続での育成はできません。「広告を見てスキップ」をご利用ください。");
                     return;
                 }
             }
@@ -793,7 +812,12 @@
             else if (currentProgress <= 45) { currentStage = 2; currentMetal = '真鍮 (Brass) - 精密整形中'; }
             else if (currentProgress <= 70) { currentStage = 3; currentMetal = '✨ シルバー925 (Sterling Silver)'; }
             else if (currentProgress < 100) { currentStage = 4; currentMetal = '👑 最高級 K18ゴールド'; }
-            else { currentStage = 5; currentMetal = '🌟 プレミアムジュエリー究極完成'; }
+            else { 
+                currentStage = 5; 
+                currentMetal = '🌟 プレミアムジュエリー究極完成'; 
+                localStorage.removeItem('active_project_id');
+                alert("🎉 おめでとうございます！ジュエリーが究極完成を迎えました！新しい原石に挑戦できるようになりました ✨");
+            }
 
             const nowIso = new Date().toISOString();
             currentUpdatedAt = nowIso;
@@ -814,7 +838,7 @@
 
             updateUI();
             checkCooldown();
-            alert("✨ 丁寧に研磨を行いました！完成度がアップしました。");
+            if (currentStage < 5) alert("✨ 丁寧に研磨を行いました！完成度がアップしました。");
         }
 
         async function listenToLogs() {
@@ -860,13 +884,20 @@
 
             const badge = document.getElementById('project-badge');
             const actionBtn = document.getElementById('action-btn');
+            const adBtn = document.getElementById('ad-btn');
             const icon = document.getElementById('gem-icon');
 
             if (currentStage === 1) { badge.innerText = "⛏️ レベル1：荒削り"; icon.innerText = "🪨"; }
             else if (currentStage === 2) { badge.innerText = "📐 レベル2：精密整形"; icon.innerText = "⛏️"; }
             else if (currentStage === 3) { badge.innerText = "✨ レベル3：シルバー化"; icon.innerText = "💎"; }
             else if (currentStage === 4) { badge.innerText = "👑 レベル4：K18ゴールド"; icon.innerText = "💍"; }
-            else { badge.innerText = "🌟 レベル5：究極完成"; icon.innerText = "✨💎✨"; actionBtn.innerHTML = "🎉 完成済み"; actionBtn.disabled = true; }
+            else { 
+                badge.innerText = "🌟 レベル5：究極完成"; 
+                icon.innerText = "✨💎✨"; 
+                actionBtn.innerHTML = "🎉 完成済み（新しく原石を選べます）"; 
+                actionBtn.disabled = true; 
+                adBtn.classList.add('hidden');
+            }
         }
 
         async function switchTab(tabName) {
@@ -895,8 +926,15 @@
                 fetchFriendsRooms();
             } else if (tabName === 'home') {
                 fetchCollaboratorProducts();
-            } else if (tabName === 'grow' && !currentProjectId) {
-                fetchProjectsList();
+            } else if (tabName === 'grow') {
+                const lockedId = localStorage.getItem('active_project_id');
+                if (lockedId && !currentProjectId) {
+                    await visitFriendRoom(lockedId, currentUsername);
+                } else if (!currentProjectId) {
+                    document.getElementById('workshop-area').classList.add('hidden');
+                    document.getElementById('selection-area').classList.remove('hidden');
+                    fetchProjectsList();
+                }
             }
         }
     </script>
