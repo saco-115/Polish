@@ -37,7 +37,6 @@
                 height: 844px;
             }
         }
-        /* 掘る時のブルブル揺れるアニメーション */
         @keyframes miningShake {
             0% { transform: translate(0, 0) rotate(0deg); }
             20% { transform: translate(-4px, 2px) rotate(-3deg); }
@@ -61,7 +60,6 @@
                 <p class="text-[10px] text-pink-100">職人: <span id="header-status" class="font-bold text-yellow-200">未ログイン</span></p>
             </div>
             <div class="flex items-center gap-2">
-                <!-- 通知ベルボタン -->
                 <button onclick="toggleNotificationModal()" class="relative bg-white/20 hover:bg-white/30 p-2 rounded-full transition text-sm">
                     🔔
                     <span id="notif-badge" class="absolute -top-1 -right-1 bg-rose-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">3</span>
@@ -89,7 +87,7 @@
             <div id="view-home" class="p-4 space-y-4 hidden">
                 <div class="bg-pink-50 border border-pink-100 rounded-2xl p-4 text-pink-900 shadow-sm">
                     <h2 class="font-bold text-sm">🛍️ 共創ジュエリー・マーケット</h2>
-                    <p class="text-xs mt-1 text-pink-700 leading-relaxed">レベル別に完成したプレミアムジュエリーや、作家の限定コラボ作品を購入できます。</p>
+                    <p class="text-xs mt-1 text-pink-700 leading-relaxed">レベル別に完成したプレミアムジュエリーや, 作家の限定コラボ作品を購入できます。</p>
                 </div>
 
                 <div class="space-y-3">
@@ -105,9 +103,37 @@
                 </div>
             </div>
 
-            <!-- 【画面2：工房（育成 ＆ 宝石選択）】 -->
+            <!-- 【画面2：工房（育成 ＆ モード選択 ＆ 宝石選択）】 -->
             <div id="view-grow" class="p-4 space-y-4 hidden">
-                <!-- 未選択時の宝石選択エリア -->
+                
+                <!-- 【ステップ1】最初にスタイルを選ぶエリア -->
+                <div id="mode-select-area" class="space-y-3 hidden">
+                    <div class="bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-2xl p-5 shadow-md space-y-2">
+                        <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-md font-bold">✨ 新規スタート設定</span>
+                        <h2 class="font-bold text-base">育成スタイルの選択</h2>
+                        <p class="text-xs text-pink-100 leading-relaxed">この原石をどのように育てていくか選んでください。（※完了まで変更できません）</p>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <button onclick="setGrowthMode('solo')" class="w-full bg-white border border-pink-200 p-4 rounded-2xl text-left shadow-sm hover:border-rose-400 transition space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-gray-800 text-sm">🔒 ひとりでコツコツ育てる</span>
+                                <span class="text-[10px] bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded-md">マイペース派</span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 leading-relaxed">他の人にお手伝いされず、自分のペースと計画だけでじっくり究極完成を目指します。</p>
+                        </button>
+
+                        <button onclick="setGrowthMode('coop')" class="w-full bg-white border border-pink-200 p-4 rounded-2xl text-left shadow-sm hover:border-rose-400 transition space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-rose-600 text-sm">👥 みんなのお手伝いを許可する</span>
+                                <span class="text-[10px] bg-pink-100 text-rose-700 font-bold px-2 py-0.5 rounded-md">共創・協力派</span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 leading-relaxed">他の職人たちに工房へ遊びに来てもらい、おてつだいハンマーで一緒にスピードアップして育てます。</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 【ステップ2】原石選択エリア -->
                 <div id="selection-area" class="space-y-3">
                     <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-rose-900 shadow-sm">
                         <h2 class="font-bold text-sm">💎 育てる宝石を選びましょう！</h2>
@@ -118,11 +144,11 @@
                     </div>
                 </div>
 
-                <!-- 選択・育成中の工房エリア -->
+                <!-- 【ステップ3】選択・育成中の工房エリア -->
                 <div id="workshop-area" class="space-y-4 hidden">
                     <div class="flex justify-between items-center bg-pink-50 px-3 py-2 rounded-xl">
                         <span id="room-owner-tag" class="text-[10px] bg-pink-200 text-pink-800 font-bold px-2 py-0.5 rounded-full">マイ工房（育成集中中）</span>
-                        <span id="finish-status-tag" class="text-[10px] text-rose-600 font-bold">完走まであと少し！</span>
+                        <span id="mode-badge-tag" class="text-[10px] bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded-full">モード: 協力</span>
                     </div>
 
                     <div class="text-center space-y-1 py-1">
@@ -131,9 +157,8 @@
                         <p id="current-item-author" class="text-xs text-rose-500 font-medium">監修</p>
                     </div>
 
-                    <!-- ビジュアルエリア（掘る演出対象） -->
+                    <!-- ビジュアルエリア -->
                     <div id="gem-visual-box" class="bg-gradient-to-b from-stone-900 to-rose-950 rounded-3xl p-5 text-white text-center relative overflow-hidden shadow-inner border border-rose-900 transition-all">
-                        <!-- 削ったときに飛び散る破片エフェクト表示用 -->
                         <div id="sparkle-effect" class="absolute inset-0 flex items-center justify-center pointer-events-none text-xl opacity-0 transition-opacity">✨ ⛏️ パキッ！カリッ！ ✨</div>
 
                         <div id="gem-icon" class="text-5xl my-2">🪨</div>
@@ -158,16 +183,27 @@
                             🔨 削り・磨きアクションを行う（1時間に1回）
                         </button>
                         
-                        <!-- 広告視聴スキップボタン -->
                         <button id="ad-btn" onclick="watchAdToSkip()" class="w-full bg-gradient-to-r from-amber-400 to-orange-400 text-white font-bold py-2.5 rounded-2xl shadow-md hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-2 text-xs hidden">
                             📺 広告を見て待ち時間をスキップしてすぐ削る！
                         </button>
                     </div>
 
+                    <!-- 招待コード入力セクション -->
+                    <div class="bg-white border border-pink-100 rounded-2xl p-4 space-y-2 shadow-sm">
+                        <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5">
+                            <span>🎟️</span> 招待コードを入力する
+                        </h3>
+                        <p class="text-[11px] text-gray-500">友達からもらった招待コードを入力して、一緒に絆を深めよう！</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="input-invite-code" placeholder="例: POLISH-GEM-2026" class="flex-1 bg-gray-50 border border-gray-200 text-xs px-3 py-2 rounded-xl text-gray-700 font-mono outline-none focus:border-rose-400">
+                            <button onclick="applyInviteCode()" class="bg-rose-500 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-rose-600 transition">適用する</button>
+                        </div>
+                    </div>
+
                     <!-- 紹介コード・シェアセクション -->
                     <div class="bg-white border border-pink-100 rounded-2xl p-4 space-y-2 shadow-sm">
                         <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5">
-                            <span>🔗</span> 仲間を招待して一緒に育てる（紹介コード）
+                            <span>🔗</span> 仲間を招待して一緒に育てる（自分の紹介コード）
                         </h3>
                         <p class="text-[11px] text-gray-500">このコードを友達にシェアして、一緒にプロジェクトの完成度を上げよう！</p>
                         <div class="flex gap-2">
@@ -190,7 +226,7 @@
             <div id="view-friends" class="p-4 space-y-4 hidden">
                 <div class="bg-pink-50 border border-pink-100 rounded-2xl p-4 text-pink-900 shadow-sm">
                     <h2 class="font-bold text-sm">👥 みんなの工房（ルーム一覧）</h2>
-                    <p class="text-xs mt-1 text-pink-700 leading-relaxed">他の職人の工房に遊びに行き、おてつだいハンマーで宝石を一緒に磨いてあげよう！✨</p>
+                    <p class="text-xs mt-1 text-pink-700 leading-relaxed">他の職人の工房に遊びに行き, おてつだいハンマーで宝石を一緒に磨いてあげよう！✨</p>
                 </div>
 
                 <div class="space-y-3">
@@ -279,7 +315,6 @@
     </div>
 
     <script>
-        // ─── Supabase 設定 ───
         const SUPABASE_URL = 'https://btpuoqumetkkkicobacp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cHVvcXVtZXRra2tpY29iYWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NzQ5OTAsImV4cCI6MjEwNzU1MDk5MH0.x7dtxP-d1McO3Tj3WpJLA-AckQVNoLe1lZz4lOTgWn0';
         
@@ -295,6 +330,7 @@
         let currentTitle = '原石';
         let currentAuthor = '';
         let currentUpdatedAt = null;
+        let pendingSelectedProjectId = null;
 
         async function initApp() {
             try {
@@ -602,6 +638,79 @@
             });
         }
 
+        // 1. 原石を選んだとき：まずはモード選択を表示する
+        async function selectProject(projectId) {
+            const lockedId = localStorage.getItem('active_project_id');
+            if (lockedId && lockedId !== projectId) {
+                const { data } = await client.from('projects').select('title').eq('id', lockedId).single();
+                const lockedTitle = data ? data.title : '別の原石';
+                alert(`⚠️ 現在「${lockedTitle}」を育成中のため、他の原石を選ぶことはできません！完了までこの子に集中してください✨`);
+                return;
+            }
+
+            pendingSelectedProjectId = projectId;
+            document.getElementById('selection-area').classList.add('hidden');
+            document.getElementById('mode-select-area').classList.remove('hidden');
+        }
+
+        // 2. モード（ひとりで / 協力）を決めたら、自分の工房としてルームを開く
+        async function setGrowthMode(mode) {
+            if (!pendingSelectedProjectId) return;
+
+            localStorage.setItem('active_project_mode', mode);
+            localStorage.setItem('active_project_id', pendingSelectedProjectId);
+
+            document.getElementById('mode-select-area').classList.add('hidden');
+            
+            // 自分の工房として読み込む
+            await openMyWorkshop(pendingSelectedProjectId);
+        }
+
+        // 3. 【自分の工房】として原石を開く関数（ここが修正ポイント！）
+        async function openMyWorkshop(projectId) {
+            const { data: { session } } = await client.auth.getSession();
+            currentUser = session ? session.user : null;
+
+            if (!currentUser) {
+                alert("ログインが必要です！");
+                switchTab('mypage');
+                return;
+            }
+
+            const { data } = await client.from('projects').select('*').eq('id', projectId).single();
+            if (data) {
+                currentProjectId = data.id;
+                currentProgress = data.progress;
+                currentStage = data.stage;
+                currentMetal = data.metal_name;
+                currentTitle = data.title;
+                currentAuthor = data.author;
+                currentUpdatedAt = data.updated_at;
+
+                updateUI();
+                
+                document.getElementById('selection-area').classList.add('hidden');
+                document.getElementById('mode-select-area').classList.add('hidden');
+                document.getElementById('workshop-area').classList.remove('hidden');
+
+                const ownerTag = document.getElementById('room-owner-tag');
+                const modeBadge = document.getElementById('mode-badge-tag');
+                const actionBtn = document.getElementById('action-btn');
+
+                const savedMode = localStorage.getItem('active_project_mode') || 'coop';
+                modeBadge.innerText = savedMode === 'solo' ? 'モード: ひとりで集中' : 'モード: 共創（お手伝いOK）';
+
+                // 自分の工房なので「〜さんのお手伝い」ではなく自分の表示にする
+                ownerTag.innerText = "マイ工房（育成集中中）";
+                actionBtn.innerText = `🔨 削り・磨きアクションを行う（1時間に1回）`;
+
+                checkCooldown();
+                listenToLogs();
+                switchTab('grow');
+            }
+        }
+
+        // 4. 【他人の工房】をお手伝いしに行くときの関数
         async function visitFriendRoom(projectId, ownerName) {
             const { data: { session } } = await client.auth.getSession();
             currentUser = session ? session.user : null;
@@ -625,14 +734,18 @@
                 updateUI();
                 
                 document.getElementById('selection-area').classList.add('hidden');
+                document.getElementById('mode-select-area').classList.add('hidden');
                 document.getElementById('workshop-area').classList.remove('hidden');
 
                 const ownerTag = document.getElementById('room-owner-tag');
+                const modeBadge = document.getElementById('mode-badge-tag');
                 const actionBtn = document.getElementById('action-btn');
 
+                modeBadge.innerText = `🏠 ${ownerName}さんの工房`;
+
                 if (ownerName === currentUsername || ownerName === currentAuthor) {
-                    ownerTag.innerText = "マイ工房（育成集中中・変更不可）";
-                    actionBtn.innerText = `🔨 研磨アクションを行う`;
+                    ownerTag.innerText = "マイ工房（育成集中中）";
+                    actionBtn.innerText = `🔨 削り・磨きアクションを行う（1時間に1回）`;
                 } else {
                     ownerTag.innerText = `🏠 ${ownerName}さんの工房にお邪魔中`;
                     actionBtn.innerText = `🔨 ${ownerName}さんの宝石をおてつだいする`;
@@ -642,19 +755,6 @@
                 listenToLogs();
                 switchTab('grow');
             }
-        }
-
-        async function selectProject(projectId) {
-            const lockedId = localStorage.getItem('active_project_id');
-            if (lockedId && lockedId !== projectId) {
-                const { data } = await client.from('projects').select('title').eq('id', lockedId).single();
-                const lockedTitle = data ? data.title : '別の原石';
-                alert(`⚠️ 現在「${lockedTitle}」を育成中のため、他の原石を選ぶことはできません！完了までこの子に集中してください✨`);
-                return;
-            }
-
-            localStorage.setItem('active_project_id', projectId);
-            await visitFriendRoom(projectId, currentAuthor);
         }
 
         async function fetchCollaboratorProducts() {
@@ -793,7 +893,53 @@
             alert("✨ 広告視聴完了！待ち時間がスキップされました。すぐに研磨できます！");
         }
 
-        // ⛏️ 掘る演出を加えたメインアクション
+        async function applyInviteCode() {
+            const codeInput = document.getElementById('input-invite-code');
+            const code = codeInput.value.trim();
+
+            if (!code) {
+                alert("招待コードを入力してください。");
+                return;
+            }
+
+            if (!currentProjectId) {
+                alert("現在育成中の原石がありません。");
+                return;
+            }
+
+            let addBonus = 5;
+            currentProgress += addBonus;
+            if (currentProgress > 100) currentProgress = 100;
+
+            if (currentProgress <= 20) { currentStage = 1; }
+            else if (currentProgress <= 45) { currentStage = 2; currentMetal = '真鍮 (Brass) - 精密整形中'; }
+            else if (currentProgress <= 70) { currentStage = 3; currentMetal = '✨ シルバー925 (Sterling Silver)'; }
+            else if (currentProgress < 100) { currentStage = 4; currentMetal = '👑 最高級 K18ゴールド'; }
+            else { 
+                currentStage = 5; 
+                currentMetal = '🌟 プレミアムジュエリー究極完成'; 
+                localStorage.removeItem('active_project_id');
+                localStorage.removeItem('active_project_mode');
+            }
+
+            await client.from('projects').update({ 
+                progress: currentProgress, 
+                stage: currentStage, 
+                metal_name: currentMetal 
+            }).eq('id', currentProjectId);
+
+            await client.from('contributions').insert([{ 
+                project_id: currentProjectId, 
+                user_id: currentUser.id, 
+                username: currentUsername, 
+                action_type: `が招待コード「${code}」を適用し、絆パワーで磨きました (+${addBonus}%)` 
+            }]);
+
+            updateUI();
+            codeInput.value = '';
+            alert(`🎉 招待コード「${code}」が正常に適用されました！完成度が +${addBonus}% アップしました ✨`);
+        }
+
         async function performAction() {
             const { data: { session } } = await client.auth.getSession();
             currentUser = session ? session.user : null;
@@ -814,7 +960,6 @@
                 }
             }
 
-            // ⛏️ 掘る・削る演出（ブルブル揺らす ＆ エフェクト表示）
             const visualBox = document.getElementById('gem-visual-box');
             const sparkle = document.getElementById('sparkle-effect');
             
@@ -840,6 +985,7 @@
                 currentStage = 5; 
                 currentMetal = '🌟 プレミアムジュエリー究極完成'; 
                 localStorage.removeItem('active_project_id');
+                localStorage.removeItem('active_project_mode');
                 alert("🎉 おめでとうございます！ジュエリーが究極完成を迎えました！新しい原石に挑戦できるようになりました ✨");
             }
 
@@ -952,9 +1098,10 @@
             } else if (tabName === 'grow') {
                 const lockedId = localStorage.getItem('active_project_id');
                 if (lockedId && !currentProjectId) {
-                    await visitFriendRoom(lockedId, currentUsername);
+                    await openMyWorkshop(lockedId);
                 } else if (!currentProjectId) {
                     document.getElementById('workshop-area').classList.add('hidden');
+                    document.getElementById('mode-select-area').classList.add('hidden');
                     document.getElementById('selection-area').classList.remove('hidden');
                     fetchProjectsList();
                 }
